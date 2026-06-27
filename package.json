@@ -1,0 +1,26 @@
+{
+  "name": "maswer-attend",
+  "version": "1.0.0",
+  "description": "Maswer Attend - QR Attendance System",
+  "main": "app.js",
+  "bin": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "build": "pkg app.js --target node18-win-x64 --output MaswErAttend.exe --compress GZip"
+  },
+  "pkg": {
+    "assets": [
+      "public/**/*",
+      "data/**/*"
+    ],
+    "targets": ["node18-win-x64"]
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "qrcode": "^1.5.3",
+    "xlsx": "^0.18.5",
+    "uuid": "^9.0.0",
+    "open": "^8.4.2"
+  }
+}
