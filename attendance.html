@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Maswer Attend – Meri Attendance</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
+:root{--brand:#F05A22;--dark:#1E2D4E;--border:#e2e4ea;--text:#1a1a2e;--muted:#7b8299;--gray:#f5f6fa;}
+body{background:#f0f2f5;min-height:100vh;}
+
+/* TOP BAR */
+.topbar{background:var(--dark);padding:14px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;}
+.topbar .plus{font-size:20px;font-weight:900;color:var(--brand);}
+.topbar .name{font-size:16px;font-weight:700;color:#fff;}
+.topbar .tag{font-size:9px;background:var(--brand);color:#fff;border-radius:4px;padding:2px 6px;font-weight:700;}
+.back-link{margin-left:auto;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;cursor:pointer;}
+.back-link:hover{color:#fff;}
+
+/* BODY */
+.page-body{padding:18px;max-width:480px;margin:0 auto;}
+
+/* HERO CARD */
+.hero{background:linear-gradient(135deg,#1E2D4E 0%,#2d4a7a 100%);border-radius:18px;padding:22px;margin-bottom:16px;color:#fff;}
+.hero .h-welcome{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:3px;}
+.hero .h-name{font-size:22px;font-weight:700;}
+.hero .h-id{font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px;}
+.hero .stats-row{display:flex;gap:10px;margin-top:16px;}
+.h-stat{background:rgba(255,255,255,0.1);border-radius:12px;padding:12px;flex:1;text-align:center;}
+.h-stat .hsv{font-size:24px;font-weight:700;color:#fff;}
+.h-stat .hsl{font-size:10px;color:rgba(255,255,255,0.55);margin-top:2px;text-transform:uppercase;letter-spacing:0.3px;}
+
+/* ATT BADGE */
+.att-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-top:12px;}
+.att-good{background:rgba(59,109,17,0.25);color:#a8e063;}
+.att-warn{background:rgba(133,79,11,0.25);color:#f0b84a;}
+.att-bad{background:rgba(162,45,45,0.25);color:#ff8080;}
+
+/* MONTH STRIP */
+.month-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none;}
+.month-strip::-webkit-scrollbar{display:none;}
+.month-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.month-chip.on{background:var(--dark);color:#fff;border-color:var(--dark);}
+
+/* SECTION */
+.sec-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+
+/* HISTORY LIST */
+.hist-list{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.hist-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);}
+.hist-item:last-child{border-bottom:none;}
+.hi-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.hi-p{background:#EAF3DE;} .hi-a{background:#FCEBEB;} .hi-l{background:#FAEEDA;}
+.hi-info{flex:1;}
+.hi-day{font-size:13px;font-weight:600;color:var(--text);}
+.hi-time{font-size:11px;color:var(--muted);margin-top:2px;}
+.badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.bp{background:#EAF3DE;color:#3B6D11;} .ba{background:#FCEBEB;color:#A32D2D;} .bl{background:#FAEEDA;color:#854F0B;}
+
+/* SCAN AGAIN BTN */
+.scan-btn{display:block;width:100%;padding:14px;background:var(--brand);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:16px;transition:all 0.2s;}
+.scan-btn:hover{background:#d44d1a;transform:translateY(-1px);}
+
+/* LOADING */
+.loading{text-align:center;padding:30px;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* NOT FOUND */
+.not-found{text-align:center;padding:40px 20px;}
+.not-found .nf-emoji{font-size:50px;margin-bottom:12px;}
+.not-found p{font-size:14px;color:var(--muted);line-height:1.7;}
+.not-found a{color:var(--brand);font-weight:700;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="plus">+</span>
+  <span class="name">maswer</span>
+  <span class="tag">attend</span>
+  <a class="back-link" href="/scan">← Attendance dein</a>
+</div>
+
+<div class="page-body" id="pageBody">
+  <div class="loading"><div class="spinner"></div><br>Load ho raha hai...</div>
+</div>
+
+<script>
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS_HI = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function getParams() {
+  const p = new URLSearchParams(window.location.search);
+  return { id: p.get('id') || '' };
+}
+
+function badgeHtml(s) {
+  if (s === 'present') return '<span class="badge bp">Present</span>';
+  if (s === 'late') return '<span class="badge bl">Late</span>';
+  return '<span class="badge ba">Absent</span>';
+}
+function iconHtml(s) {
+  const cls = s === 'present' ? 'hi-p' : s === 'late' ? 'hi-l' : 'hi-a';
+  const em = s === 'present' ? '✅' : s === 'late' ? '⏰' : '❌';
+  return `<div class="hi-icon ${cls}">${em}</div>`;
+}
+function fmtDate(ds) {
+  const d = new Date(ds + 'T00:00:00');
+  return `${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS_HI[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+async function loadPage() {
+  const { id } = getParams();
+  const body = document.getElementById('pageBody');
+
+  if (!id) {
+    body.innerHTML = `<div class="not-found">
+      <div class="nf-emoji">🔍</div>
+      <p>EMP ID nahi mila.<br>Pehle QR scan karke attendance dein.</p>
+      <br><a href="/scan">← Scan page par jaayein</a>
+    </div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/attendance/employee/' + id);
+    if (!res.ok) {
+      body.innerHTML = `<div class="not-found">
+        <div class="nf-emoji">😕</div>
+        <p>Employee "${id}" nahi mila.<br>Admin se apna EMP ID confirm karein.</p>
+        <br><a href="/scan">← Wapas jaayein</a>
+      </div>`;
+      return;
+    }
+
+    const { employee: emp, attendance: att, stats } = await res.json();
+    const pct = stats.total > 0 ? Math.round((stats.present / stats.total) * 100) : 0;
+    const attClass = pct >= 80 ? 'att-good' : pct >= 60 ? 'att-warn' : 'att-bad';
+    const attLabel = pct >= 80 ? '😊 Bahut badhiya!' : pct >= 60 ? '😐 Theek hai' : '⚠️ Dhyan dein';
+
+    // Group by month
+    const byMonth = {};
+    att.forEach(a => {
+      const m = a.date.substring(0, 7); // YYYY-MM
+      if (!byMonth[m]) byMonth[m] = [];
+      byMonth[m].push(a);
+    });
+    const months = Object.keys(byMonth).sort((a, b) => b.localeCompare(a));
+    const curMonth = months[0] || new Date().toISOString().substring(0, 7);
+
+    // Month strip html
+    const monthStripHtml = months.map(m => {
+      const [y, mo] = m.split('-');
+      return `<div class="month-chip ${m === curMonth ? 'on' : ''}" onclick="filterMonth('${m}',this)">${MONTHS_HI[parseInt(mo) - 1]} ${y}</div>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div class="hero">
+        <div class="h-welcome">Namaste 👋</div>
+        <div class="h-name">${emp.name}</div>
+        <div class="h-id">${emp.id} · 📱 ${emp.mobile}</div>
+        <div class="stats-row">
+          <div class="h-stat"><div class="hsv">${stats.present}</div><div class="hsl">Present</div></div>
+          <div class="h-stat"><div class="hsv">${stats.total - stats.present}</div><div class="hsl">Late/Miss</div></div>
+          <div class="h-stat"><div class="hsv">${pct}%</div><div class="hsl">Attendance</div></div>
+        </div>
+        <div class="att-badge ${attClass}">${attLabel}</div>
+      </div>
+
+      <a class="scan-btn" href="/scan">📱 Aaj ki attendance dein →</a>
+
+      ${months.length > 1 ? `<div class="month-strip">${monthStripHtml}</div>` : ''}
+
+      <div class="sec-label" id="monthLabel"></div>
+      <div class="hist-list" id="histList"></div>
+    `;
+
+    filterMonth(curMonth, null, byMonth);
+
+  } catch (e) {
+    body.innerHTML = `<div class="not-found">
+      <div class="nf-emoji">🔌</div>
+      <p>Server se connect nahi ho saka.<br>Admin se baat karein.</p>
+    </div>`;
+  }
+}
+
+let cachedByMonth = {};
+
+function filterMonth(m, el, data) {
+  if (data) cachedByMonth = data;
+  // Update active chip
+  document.querySelectorAll('.month-chip').forEach(c => c.classList.remove('on'));
+  if (el) el.classList.add('on');
+
+  const [y, mo] = m.split('-');
+  document.getElementById('monthLabel').textContent =
+    `${MONTHS_HI[parseInt(mo) - 1]} ${y} — attendance`;
+
+  const records = (cachedByMonth[m] || []).sort((a, b) => b.date.localeCompare(a.date));
+  const histEl = document.getElementById('histList');
+
+  if (!records.length) {
+    histEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Is mahine koi attendance nahi</div>';
+    return;
+  }
+
+  histEl.innerHTML = records.map(a => `
+    <div class="hist-item">
+      ${iconHtml(a.status)}
+      <div class="hi-info">
+        <div class="hi-day">${fmtDate(a.date)}</div>
+        <div class="hi-time">
+          ${a.time ? '🟢 In: ' + a.time : '—'}
+          ${a.checkOut ? ' &nbsp; 🔴 Out: ' + a.checkOut : ''}
+          ${a.totalHours ? ' &nbsp; ⏱ ' + a.totalHours : ''}
+        </div>
+      </div>
+      ${badgeHtml(a.status)}
+    </div>
+  `).join('');
+}
+
+loadPage();
+</script>
+</body>
+</html>
