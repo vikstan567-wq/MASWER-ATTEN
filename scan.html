@@ -1,458 +1,294 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Maswer Attend – Scan</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
-:root{--brand:#F05A22;--dark:#1E2D4E;--border:#e2e4ea;--text:#1a1a2e;--muted:#7b8299;}
-body{min-height:100vh;background:linear-gradient(160deg,#1E2D4E 0%,#253b6e 60%,#1a1a2e 100%);display:flex;align-items:center;justify-content:center;padding:20px;}
-
-.card{background:#fff;border-radius:24px;width:100%;max-width:360px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,0.35);}
-
-/* header */
-.card-header{background:linear-gradient(135deg,#1E2D4E,#2d4a7a);padding:22px;text-align:center;}
-.logo-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:4px;}
-.logo-row .plus{font-size:24px;font-weight:900;color:var(--brand);}
-.logo-row .name{font-size:20px;font-weight:700;color:#fff;}
-.logo-row .tag{font-size:10px;background:var(--brand);color:#fff;border-radius:5px;padding:3px 7px;font-weight:700;}
-.sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;}
-
-/* form */
-.form-body{padding:26px;}
-.time-bar{background:linear-gradient(90deg,#EAF3DE,#f5faf0);border-radius:10px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
-.time-bar .tbl{font-size:11px;color:#3B6D11;font-weight:600;}
-.time-bar .tval{font-size:15px;font-weight:700;color:#3B6D11;}
-
-.field{margin-bottom:14px;}
-.field label{font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px;}
-.field .req{color:var(--brand);}
-.field input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:11px;font-size:15px;outline:none;color:var(--text);transition:border 0.2s,box-shadow 0.2s;}
-.field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(240,90,34,0.1);}
-.field .hint{font-size:11px;color:var(--muted);margin-top:4px;}
-
-/* name field - shown only when first time */
-#nameField{display:none;}
-
-/* STATUS BADGE */
-#statusBadge{display:none;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;font-weight:700;text-align:center;line-height:1.5;}
-#statusBadge.in-mode{background:#EAF3DE;color:#3B6D11;border:1.5px solid #b8dda0;}
-#statusBadge.out-mode{background:#EAF0FB;color:#1E2D4E;border:1.5px solid #a5b4e8;}
-#statusBadge.done-mode{background:#FFF3E6;color:#8B4000;border:1.5px solid #f5c896;}
-
-.note-box{background:#E6F1FB;border-radius:10px;padding:10px 13px;margin-bottom:16px;font-size:11px;color:#185FA5;line-height:1.7;}
-.note-box strong{display:block;margin-bottom:2px;}
-
-/* MAIN SMART BUTTON */
-.submit-btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;color:#fff;}
-.submit-btn.in-btn{background:#F05A22;}
-.submit-btn.in-btn:hover{background:#d44d1a;transform:translateY(-1px);box-shadow:0 6px 18px rgba(240,90,34,0.35);}
-.submit-btn.out-btn{background:#1E2D4E;}
-.submit-btn.out-btn:hover{background:#162240;transform:translateY(-1px);box-shadow:0 6px 18px rgba(30,45,78,0.35);}
-.submit-btn:active{transform:scale(0.98);}
-.submit-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;box-shadow:none;opacity:0.7;}
-
-.err-msg{color:#e24b4a;font-size:12px;text-align:center;margin-top:10px;min-height:16px;font-weight:600;}
-.view-link{text-align:center;margin-top:14px;font-size:12px;color:var(--muted);}
-.view-link a{color:var(--brand);font-weight:700;text-decoration:none;}
-
-/* overlays */
-.overlay{position:fixed;inset:0;background:rgba(20,35,65,0.94);z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;}
-.overlay.show{display:flex;}
-.thumb-emoji{font-size:90px;animation:thumbPop 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:center bottom;}
-@keyframes thumbPop{0%{transform:scale(0) rotate(-30deg);opacity:0;}60%{transform:scale(1.25) rotate(8deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
-.confetti-row{display:flex;gap:8px;margin-top:10px;animation:fadeUp 0.5s 0.3s both;}
-.conf{font-size:22px;animation:confettiBounce 0.8s ease infinite alternate;}
-.conf:nth-child(2){animation-delay:0.15s;}
-.conf:nth-child(3){animation-delay:0.3s;}
-@keyframes confettiBounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
-.ov-name{margin-top:18px;font-size:22px;font-weight:700;color:#fff;animation:fadeUp 0.5s 0.35s both;}
-.ov-msg{margin-top:6px;font-size:14px;color:rgba(255,255,255,0.7);animation:fadeUp 0.5s 0.5s both;line-height:1.6;}
-.ov-time{margin-top:8px;font-size:13px;color:rgba(255,255,255,0.5);animation:fadeUp 0.5s 0.6s both;}
-.ov-btn{margin-top:26px;padding:14px 32px;background:var(--brand);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;animation:fadeUp 0.5s 0.75s both;transition:all 0.2s;}
-.ov-btn:hover{background:#d44d1a;transform:translateY(-1px);}
-.ov-back{margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer;animation:fadeUp 0.4s 0.9s both;}
-.ov-back:hover{color:rgba(255,255,255,0.7);}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-
-.spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-</style>
-</head>
-<body>
-
-<div class="card">
-  <div class="card-header">
-    <div class="logo-row">
-      <span class="plus">+</span><span class="name">maswer</span><span class="tag">attend</span>
-    </div>
-    <div class="sub">Apni attendance darj karein</div>
-  </div>
-  <div class="form-body">
-    <div class="time-bar">
-      <span class="tbl">⏰ Abhi ka samay</span>
-      <span class="tval" id="liveClock">--:-- --</span>
-    </div>
-
-    <div class="field">
-      <label>EMP ID <span class="req">*</span></label>
-      <input type="text" id="empId" placeholder="Jaise: MW001" autocomplete="off" autocapitalize="characters" oninput="onEmpIdChange()"/>
-      <div class="hint">Admin ne diya hua EMP ID bharein</div>
-    </div>
-
-    <!-- Shown only for first-time / unrecognized employees -->
-    <div class="field" id="nameField">
-      <label>Full Name</label>
-      <input type="text" id="empName" placeholder="Aapka poora naam"/>
-      <div class="hint">Pehli baar hai to naam zaroori hai</div>
-    </div>
-
-    <!-- Smart status badge -->
-    <div id="statusBadge"></div>
-
-    <div id="locationStatus" style="background:#f0f2f5;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#7b8299;display:flex;align-items:center;gap:8px;">
-      <span id="locIcon">📍</span>
-      <span id="locText">Location check ho raha hai...</span>
-    </div>
-
-    <!-- Single smart button -->
-    <button class="submit-btn in-btn" id="mainBtn" onclick="smartSubmit()" disabled style="opacity:0.6;">
-      ✓ Attendance Darj Karein
-    </button>
-    <div class="err-msg" id="errMsg"></div>
-    <div class="view-link">Attendance dekhni hai? <a href="/attendance">Yahan dekhein →</a></div>
-  </div>
-</div>
-
-<!-- PUNCH IN SUCCESS OVERLAY -->
-<div class="overlay" id="punchInOverlay">
-  <div class="thumb-emoji">👍</div>
-  <div class="confetti-row"><span class="conf">🎉</span><span class="conf">✨</span><span class="conf">🎊</span></div>
-  <div class="ov-name" id="piName">—</div>
-  <div class="ov-msg" id="piMsg">Punch In ho gaya!</div>
-  <div class="ov-time" id="piTime">—</div>
-  <button class="ov-btn" onclick="goToView()">📊 Meri attendance dekhein →</button>
-  <div class="ov-back" onclick="resetForm()">← Kisi aur ki attendance deni hai?</div>
-</div>
-
-<!-- PUNCH OUT SUCCESS OVERLAY -->
-<div class="overlay" id="punchOutOverlay">
-  <div style="font-size:80px;animation:thumbPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;">👋</div>
-  <div class="confetti-row"><span class="conf">✅</span><span class="conf">🏠</span><span class="conf">✅</span></div>
-  <div class="ov-name" id="poName">—</div>
-  <div class="ov-msg">Punch Out ho gaya! Ghar jaiye aaram se 😊</div>
-  <div class="ov-time" id="poTime">—</div>
-  <button class="ov-btn" onclick="goToView()">📊 Meri attendance dekhein →</button>
-  <div class="ov-back" onclick="resetForm()">← Wapas</div>
-</div>
-
-<!-- NOT REGISTERED OVERLAY -->
-<div class="overlay" id="notListedOverlay">
-  <div style="font-size:70px;">🚫</div>
-  <div class="ov-name" style="color:#FF6B6B;">Registered Nahi Hai</div>
-  <div class="ov-msg"><span id="notListedId"></span> is system mein nahi hai.<br/>Apne admin se contact karein.</div>
-  <div class="ov-back" style="margin-top:30px;" onclick="document.getElementById('notListedOverlay').classList.remove('show');resetForm()">← Wapas</div>
-</div>
-
-<script>
-let markedEmpId = '';
-let currentMode = 'punch_in'; // 'punch_in' | 'punch_out'
-let statusCheckTimer = null;
-
-// Live clock
-function updateClock() {
-  document.getElementById('liveClock').textContent =
-    new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-}
-updateClock();
-setInterval(updateClock, 1000);
-
-// ── SMART STATUS CHECK ──────────────────────────────────
-function onEmpIdChange() {
-  clearTimeout(statusCheckTimer);
-  const empId = document.getElementById('empId').value.trim();
-  if (empId.length < 2) {
-    resetBadge();
-    return;
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const QRCode = require('qrcode');
+const XLSX = require('xlsx');
+const { MongoClient } = require('mongodb');
+ 
+const app = express();
+const PORT = process.env.PORT || 3000;
+ 
+app.use(cors());
+app.use(express.json());
+const fs = require('fs');
+const PUBLIC_DIR = process.env.PUBLIC_DIR || path.join(__dirname, 'public');
+app.use(express.static(fs.existsSync(PUBLIC_DIR) ? PUBLIC_DIR : __dirname));
+ 
+// ── MongoDB Connection ─────────────────────────────────────
+const MONGO_URI = process.env.MONGO_URI;
+let db;
+ 
+async function connectDB() {
+  if (!MONGO_URI) {
+    console.error('❌ MONGO_URI environment variable set nahi hai!');
+    process.exit(1);
   }
-  // Debounce 600ms after user stops typing
-  statusCheckTimer = setTimeout(() => checkStatus(empId), 600);
-}
-
-async function checkStatus(empId) {
-  try {
-    const res = await fetch('/api/status/' + encodeURIComponent(empId.toUpperCase()));
-    const data = await res.json();
-    applyStatus(data);
-  } catch(e) {
-    // If status check fails, default to punch_in mode
-    applyStatus({ status: 'punch_in' });
-  }
-}
-
-function applyStatus(data) {
-  const badge = document.getElementById('statusBadge');
-  const btn = document.getElementById('mainBtn');
-  const nameField = document.getElementById('nameField');
-
-  badge.style.display = 'block';
-  nameField.style.display = 'none';
-
-  if (data.status === 'not_registered') {
-    // Show name field in case it's a new employee typo or first scan
-    badge.className = 'done-mode';
-    badge.innerHTML = '⚠️ Yeh EMP ID system mein nahi hai<br/><small style="font-weight:400;font-size:11px;">Admin se apna EMP ID confirm karein</small>';
-    setButtonIn();
-    currentMode = 'punch_in';
-
-  } else if (data.status === 'punch_in') {
-    badge.className = 'in-mode';
-    badge.innerHTML = `🟢 ${data.employee?.name || ''} — Aaj check-in nahi kiya<br/><small style="font-weight:400;font-size:11px;">Punch In button dabayein</small>`;
-    setButtonIn();
-    currentMode = 'punch_in';
-
-  } else if (data.status === 'punch_out') {
-    const inTime = data.record?.time || '';
-    badge.className = 'out-mode';
-    badge.innerHTML = `🔵 ${data.employee?.name || ''} — Check-in: ${inTime}<br/><small style="font-weight:400;font-size:11px;">Punch Out karne ke liye button dabayein</small>`;
-    setButtonOut();
-    currentMode = 'punch_out';
-
-  } else if (data.status === 'already_out') {
-    const outTime = data.record?.checkOut || '';
-    badge.className = 'done-mode';
-    badge.innerHTML = `✅ ${data.employee?.name || ''} — Aaj ka kaam khatam (Check-out: ${outTime})<br/><small style="font-weight:400;font-size:11px;">Kal aane par wapas Punch In kar sakte hain</small>`;
-    // Disable button - already done for today
-    btn.disabled = true;
-    btn.className = 'submit-btn in-btn';
-    btn.innerHTML = '✅ Aaj ka kaam khatam';
-    currentMode = 'already_out';
-  }
-}
-
-function setButtonIn() {
-  const btn = document.getElementById('mainBtn');
-  btn.className = 'submit-btn in-btn';
-  btn.innerHTML = '🟢 Punch In – Attendance Darj Karein';
-  if (locationAllowed) { btn.disabled = false; btn.style.opacity = '1'; }
-}
-
-function setButtonOut() {
-  const btn = document.getElementById('mainBtn');
-  btn.className = 'submit-btn out-btn';
-  btn.innerHTML = '🔵 Punch Out – Check-Out Karein';
-  if (locationAllowed) { btn.disabled = false; btn.style.opacity = '1'; }
-}
-
-function resetBadge() {
-  const badge = document.getElementById('statusBadge');
-  badge.style.display = 'none';
-  badge.innerHTML = '';
-  setButtonIn();
-  currentMode = 'punch_in';
-}
-
-// ── SMART SUBMIT ────────────────────────────────────────
-async function smartSubmit() {
-  if (currentMode === 'punch_out') {
-    await doPunchOut();
-  } else if (currentMode === 'punch_in') {
-    await doPunchIn();
-  }
-}
-
-async function doPunchIn() {
-  const empId = document.getElementById('empId').value.trim().toUpperCase();
-  const name = document.getElementById('empName').value.trim();
-  const errEl = document.getElementById('errMsg');
-  const btn = document.getElementById('mainBtn');
-
-  if (!empId) { errEl.textContent = '❌ EMP ID zaroori hai.'; return; }
-  if (!locationAllowed) {
-    errEl.textContent = '🚫 Aap office location par nahi hain!';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Register ho raha hai...';
-  errEl.textContent = '';
-
-  try {
-    const res = await fetch('/api/attendance', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ empId, name })
+  const client = new MongoClient(MONGO_URI);
+  await client.connect();
+  db = client.db('maswer_attend');
+  console.log('✅ MongoDB connected!');
+ 
+  // Seed default admin if no employees
+  const emps = db.collection('employees');
+  const count = await emps.countDocuments();
+  if (count === 0) {
+    await emps.insertOne({
+      id: 'MW113761', name: 'Vivek Singh', mobile: '8146162102',
+      role: 'admin', createdAt: new Date().toISOString()
     });
-    const data = await res.json();
-
-    if (res.status === 403 && data.error === 'not_listed') {
-      document.getElementById('notListedId').textContent = empId;
-      document.getElementById('notListedOverlay').classList.add('show');
-      btn.disabled = false; setButtonIn(); return;
-    }
-
-    if (!res.ok) {
-      errEl.textContent = '❌ ' + (data.error || 'Kuch galat hua');
-      btn.disabled = false; setButtonIn(); return;
-    }
-
-    // SUCCESS PUNCH IN
-    markedEmpId = data.employee.id;
-    const rec = data.record;
-    const isLate = rec.status === 'late';
-    document.getElementById('piName').textContent = data.employee.name;
-    document.getElementById('piMsg').textContent = isLate
-      ? 'Attendance register ho gayi! Kal time pe aana 😊'
-      : 'Aap aaj on time hain! Bahut badhiya 👏';
-    document.getElementById('piTime').textContent = `Punch In: ${rec.time} · ${isLate ? 'Late ⚠️' : 'Present ✅'}`;
-    document.getElementById('punchInOverlay').classList.add('show');
-
-  } catch(e) {
-    errEl.textContent = '❌ Server se connect nahi ho saka.';
-    btn.disabled = false; setButtonIn();
+    console.log('✅ Default admin seeded.');
   }
 }
-
-async function doPunchOut() {
-  const empId = document.getElementById('empId').value.trim().toUpperCase();
-  const errEl = document.getElementById('errMsg');
-  const btn = document.getElementById('mainBtn');
-
-  if (!empId) { errEl.textContent = '❌ EMP ID zaroori hai.'; return; }
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Check-out ho raha hai...';
-  errEl.textContent = '';
-
+ 
+// ── Helpers ────────────────────────────────────────────────
+function today() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+}
+function nowTime() {
+  return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+}
+function convertTo24(timeStr) {
+  if (!timeStr) return '00:00';
+  const upper = timeStr.trim().toUpperCase();
+  const match = upper.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/);
+  if (!match) return '00:00';
+  let hours = parseInt(match[1]);
+  const minutes = match[2];
+  const modifier = match[3];
+  if (modifier === 'PM' && hours !== 12) hours += 12;
+  if (modifier === 'AM' && hours === 12) hours = 0;
+  return `${String(hours).padStart(2,'0')}:${minutes}`;
+}
+ 
+// Shift definitions: start time in HH:MM (24h), grace 10 min
+const SHIFTS = {
+  'A': { start: '06:30', label: 'A Shift (6:30 AM)' },
+  'B': { start: '15:15', label: 'B Shift (3:15 PM)' },
+  'G': { start: '08:45', label: 'G Shift (8:45 AM)' },
+  'C': { start: '23:45', label: 'C Shift (11:45 PM)' }
+};
+ 
+function checkShiftStatus(shift, checkInTime24) {
+  const shiftDef = SHIFTS[shift?.toUpperCase()];
+  if (!shiftDef) return 'present';
+  const [sh, sm] = shiftDef.start.split(':').map(Number);
+  const [ch, cm] = checkInTime24.split(':').map(Number);
+  const shiftMinutes = sh * 60 + sm;
+  const checkInMinutes = ch * 60 + cm;
+  // Allow 10 min grace
+  return checkInMinutes <= shiftMinutes + 10 ? 'present' : 'late';
+}
+ 
+function calcTotalHours(inTime24, outTime24, date) {
   try {
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ empId })
-    });
-    const data = await res.json();
-
-    if (!res.ok) {
-      errEl.textContent = '❌ ' + (data.message || data.error);
-      btn.disabled = false; setButtonOut(); return;
-    }
-
-    // SUCCESS PUNCH OUT
-    markedEmpId = data.employee.id;
-    document.getElementById('poName').textContent = data.employee.name;
-    document.getElementById('poTime').textContent =
-      `Check-out: ${data.record.checkOut} · Kaam kiya: ${data.record.totalHours}`;
-    document.getElementById('punchOutOverlay').classList.add('show');
-
-  } catch(e) {
-    errEl.textContent = '❌ Server se connect nahi ho saka.';
-    btn.disabled = false; setButtonOut();
-  }
+    let inMs = new Date(`${date}T${inTime24}:00`).getTime();
+    let outMs = new Date(`${date}T${outTime24}:00`).getTime();
+    // If checkout is before checkin (night shift crossing midnight)
+    if (outMs < inMs) outMs += 24 * 60 * 60 * 1000;
+    const diffMs = outMs - inMs;
+    if (diffMs <= 0) return 'N/A';
+    const h = Math.floor(diffMs / 3600000);
+    const m = Math.floor((diffMs % 3600000) / 60000);
+    return `${h}h ${m}m`;
+  } catch(e) { return 'N/A'; }
 }
-
-function goToView() {
-  if (markedEmpId) window.location.href = '/attendance?id=' + markedEmpId;
-}
-
-function resetForm() {
-  document.getElementById('punchInOverlay').classList.remove('show');
-  document.getElementById('punchOutOverlay').classList.remove('show');
-  document.getElementById('empId').value = '';
-  document.getElementById('empName').value = '';
-  document.getElementById('errMsg').textContent = '';
-  document.getElementById('nameField').style.display = 'none';
-  resetBadge();
-  document.getElementById('empId').focus();
-}
-
-// Enter key support
-document.getElementById('empId').addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const nameF = document.getElementById('nameField');
-    if (nameF.style.display !== 'none') document.getElementById('empName').focus();
-    else smartSubmit();
-  }
+ 
+// ── EMPLOYEE ROUTES ────────────────────────────────────────
+app.get('/api/employees', async (req, res) => {
+  const emps = await db.collection('employees').find({}).toArray();
+  res.json(emps);
 });
-document.getElementById('empName').addEventListener('keydown', e => {
-  if (e.key === 'Enter') smartSubmit();
+ 
+app.post('/api/employees', async (req, res) => {
+  const { id, name, mobile } = req.body;
+  if (!id || !name) return res.status(400).json({ error: 'EMP ID aur naam zaroori hai' });
+  const exists = await db.collection('employees').findOne({ id: id.toUpperCase() });
+  if (exists) return res.status(409).json({ error: 'Yeh EMP ID pehle se exist karta hai' });
+  const emp = { id: id.toUpperCase(), name, mobile: mobile || 'N/A', role: 'employee', createdAt: new Date().toISOString() };
+  await db.collection('employees').insertOne(emp);
+  res.json({ success: true, employee: emp });
 });
-
-// ── GEOFENCING ──────────────────────────────────────────
-let locationAllowed = false;
-
-function getDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-async function checkLocation() {
-  const locIcon = document.getElementById('locIcon');
-  const locText = document.getElementById('locText');
-  const btn = document.getElementById('mainBtn');
-
-  if (!navigator.geolocation) {
-    locIcon.textContent = '⚠️';
-    locText.textContent = 'GPS supported nahi hai';
-    document.getElementById('locationStatus').style.background = '#FAEEDA';
-    locText.style.color = '#854F0B';
-    locationAllowed = true;
-    btn.disabled = false; btn.style.opacity = '1';
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    const userLat = pos.coords.latitude;
-    const userLng = pos.coords.longitude;
-    try {
-      const res = await fetch('/api/location');
-      const data = await res.json();
-      if (!data.lat || !data.lng) {
-        locIcon.textContent = '✅';
-        locText.textContent = 'Location OK (admin ne set nahi ki)';
-        document.getElementById('locationStatus').style.background = '#EAF3DE';
-        locText.style.color = '#3B6D11';
-        locationAllowed = true;
-        btn.disabled = false; btn.style.opacity = '1';
-        return;
-      }
-      const distance = getDistance(userLat, userLng, parseFloat(data.lat), parseFloat(data.lng));
-      const radius = data.radius || 100;
-      if (distance <= radius) {
-        locIcon.textContent = '✅';
-        locText.textContent = `Aap office mein hain! (${Math.round(distance)}m)`;
-        document.getElementById('locationStatus').style.background = '#EAF3DE';
-        locText.style.color = '#3B6D11';
-        locationAllowed = true;
-        btn.disabled = false; btn.style.opacity = '1';
-      } else {
-        locIcon.textContent = '🚫';
-        locText.textContent = `Aap office se ${Math.round(distance)}m door hain!`;
-        document.getElementById('locationStatus').style.background = '#FCEBEB';
-        locText.style.color = '#A32D2D';
-        locationAllowed = false;
-        btn.disabled = true; btn.style.opacity = '0.5';
-      }
-    } catch(e) {
-      locationAllowed = true;
-      btn.disabled = false; btn.style.opacity = '1';
-    }
-  }, () => {
-    locIcon.textContent = '⚠️';
-    locText.textContent = 'GPS access denied — allow hone par bhi chalega';
-    document.getElementById('locationStatus').style.background = '#FAEEDA';
-    locText.style.color = '#854F0B';
-    locationAllowed = true;
-    btn.disabled = false; btn.style.opacity = '1';
-  }, { enableHighAccuracy: true, timeout: 10000 });
-}
-
-checkLocation();
-</script>
-</body>
-</html>
+ 
+app.delete('/api/employees/:id', async (req, res) => {
+  const { id } = req.params;
+  if (id === 'MW113761') return res.status(403).json({ error: 'Super admin ko delete nahi kar sakte' });
+  await db.collection('employees').deleteOne({ id });
+  await db.collection('attendance').deleteMany({ empId: id });
+  res.json({ success: true });
+});
+ 
+// ── STATUS CHECK (Smart Punch In/Out) ─────────────────────
+app.get('/api/status/:empId', async (req, res) => {
+  const empId = req.params.empId.toUpperCase();
+  const emp = await db.collection('employees').findOne({ id: empId });
+  if (!emp) return res.json({ status: 'not_registered' });
+  const record = await db.collection('attendance').findOne({ empId: emp.id, date: today() });
+  if (!record) return res.json({ status: 'punch_in', employee: emp });
+  if (record.checkOut) return res.json({ status: 'already_out', employee: emp, record });
+  res.json({ status: 'punch_out', employee: emp, record });
+});
+ 
+// ── ATTENDANCE ROUTES ──────────────────────────────────────
+app.post('/api/attendance', async (req, res) => {
+  const { empId, shift } = req.body;
+  if (!empId) return res.status(400).json({ error: 'EMP ID zaroori hai' });
+  const emp = await db.collection('employees').findOne({ id: empId.toUpperCase() });
+  if (!emp) return res.status(403).json({ error: 'not_listed', message: 'Aap registered nahi hain.' });
+  const existing = await db.collection('attendance').findOne({ empId: emp.id, date: today() });
+  if (existing) return res.status(409).json({ error: 'Aaj ki attendance pehle se mark ho chuki hai!', employee: emp });
+  const checkInTime = nowTime();
+  const checkIn24 = convertTo24(checkInTime);
+  const status = shift ? checkShiftStatus(shift, checkIn24) : 'present';
+  const record = {
+    id: Date.now().toString(), empId: emp.id, empName: emp.name,
+    date: today(), time: checkInTime, shift: shift || 'G',
+    status, markedAt: new Date().toISOString()
+  };
+  await db.collection('attendance').insertOne(record);
+  res.json({ success: true, record, employee: emp });
+});
+ 
+app.post('/api/checkout', async (req, res) => {
+  const { empId } = req.body;
+  if (!empId) return res.status(400).json({ error: 'EMP ID zaroori hai' });
+  const emp = await db.collection('employees').findOne({ id: empId.toUpperCase() });
+  if (!emp) return res.status(403).json({ error: 'not_listed' });
+  const record = await db.collection('attendance').findOne({ empId: emp.id, date: today() });
+  if (!record) return res.status(404).json({ error: 'Aaj check-in nahi mili. Pehle check-in karein.' });
+  if (record.checkOut) return res.status(409).json({ error: 'already_out', message: 'Aap pehle se check-out kar chuke hain!', record, employee: emp });
+ 
+  const checkOut = nowTime();
+  const checkOut24 = convertTo24(checkOut);
+  const checkIn24 = convertTo24(record.time);
+  const totalHours = calcTotalHours(checkIn24, checkOut24, record.date || today());
+ 
+  await db.collection('attendance').updateOne(
+    { id: record.id },
+    { $set: { checkOut, checkOutAt: new Date().toISOString(), totalHours } }
+  );
+  const updated = await db.collection('attendance').findOne({ id: record.id });
+  res.json({ success: true, record: updated, employee: emp });
+});
+ 
+app.delete('/api/attendance/employee/:id', async (req, res) => {
+  const { id } = req.params;
+  const { date } = req.query;
+  if (date) await db.collection('attendance').deleteMany({ empId: id, date });
+  else await db.collection('attendance').deleteMany({ empId: id });
+  res.json({ success: true });
+});
+ 
+app.get('/api/attendance/today', async (req, res) => {
+  const emps = await db.collection('employees').find({}).toArray();
+  const todayAtt = await db.collection('attendance').find({ date: today() }).toArray();
+  const result = emps.map(e => {
+    const rec = todayAtt.find(a => a.empId === e.id);
+    return { ...e, date: today(), time: rec ? rec.time : '—', status: rec ? rec.status : 'absent', attended: !!rec };
+  });
+  res.json(result);
+});
+ 
+app.get('/api/attendance', async (req, res) => {
+  const { date, empId } = req.query;
+  const filter = {};
+  if (date) filter.date = date;
+  if (empId) filter.empId = empId;
+  const result = await db.collection('attendance').find(filter).sort({ markedAt: -1 }).toArray();
+  res.json(result);
+});
+ 
+app.get('/api/attendance/employee/:id', async (req, res) => {
+  const emp = await db.collection('employees').findOne({ id: req.params.id.toUpperCase() });
+  if (!emp) return res.status(404).json({ error: 'Employee nahi mila' });
+  const empAtt = await db.collection('attendance').find({ empId: emp.id }).sort({ markedAt: -1 }).toArray();
+  res.json({ employee: emp, attendance: empAtt, stats: { present: empAtt.length, total: empAtt.length } });
+});
+ 
+// ── ADMIN LOGIN ────────────────────────────────────────────
+app.post('/api/login', async (req, res) => {
+  const { empId, password } = req.body;
+  const emp = await db.collection('employees').findOne({ id: empId?.toUpperCase(), role: 'admin', mobile: password });
+  if (!emp) return res.status(401).json({ error: 'Galat ID ya password' });
+  res.json({ success: true, admin: emp });
+});
+ 
+// ── EXCEL EXPORT ───────────────────────────────────────────
+app.get('/api/export/today', async (req, res) => {
+  const emps = await db.collection('employees').find({}).toArray();
+  const todayStr = today();
+  const att = await db.collection('attendance').find({ date: todayStr }).toArray();
+  const rows = [['EMP ID', 'Name', 'Mobile', 'Check-in', 'Check-out', 'Total Hours', 'Status']];
+  emps.forEach(e => {
+    const rec = att.find(a => a.empId === e.id);
+    rows.push([e.id, e.name, e.mobile, rec?.time || '—', rec?.checkOut || '—', rec?.totalHours || '—', rec ? rec.status : 'Absent']);
+  });
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch:12},{ wch:22},{ wch:14},{ wch:12},{ wch:12},{ wch:12},{ wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Aaj ki Attendance');
+  const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  res.setHeader('Content-Disposition', `attachment; filename="Maswer_${todayStr}.xlsx"`);
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.send(buf);
+});
+ 
+app.get('/api/export/all', async (req, res) => {
+  const att = await db.collection('attendance').find({}).sort({ markedAt: -1 }).toArray();
+  const rows = [['EMP ID', 'Name', 'Date', 'Check-in', 'Check-out', 'Total Hours', 'Status']];
+  att.forEach(a => rows.push([a.empId, a.empName, a.date, a.time, a.checkOut||'—', a.totalHours||'—', a.status]));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch:12},{ wch:22},{ wch:12},{ wch:12},{ wch:12},{ wch:12},{ wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Full Attendance');
+  const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  res.setHeader('Content-Disposition', `attachment; filename="Maswer_Full.xlsx"`);
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.send(buf);
+});
+ 
+// ── LOCATION ROUTES ───────────────────────────────────────
+app.get('/api/location', async (req, res) => {
+  const loc = await db.collection('settings').findOne({ key: 'location' });
+  res.json(loc ? loc.value : {});
+});
+ 
+app.post('/api/location', async (req, res) => {
+  const { lat, lng, radius, name } = req.body;
+  if (!lat || !lng) return res.status(400).json({ error: 'Lat/Lng zaroori hai' });
+  const value = { lat: parseFloat(lat), lng: parseFloat(lng), radius: parseInt(radius)||100, name: name||'Office', updatedAt: new Date().toISOString() };
+  await db.collection('settings').updateOne({ key: 'location' }, { $set: { key: 'location', value } }, { upsert: true });
+  res.json({ success: true, location: value });
+});
+ 
+app.delete('/api/location', async (req, res) => {
+  await db.collection('settings').deleteOne({ key: 'location' });
+  res.json({ success: true });
+});
+ 
+// ── QR CODE ────────────────────────────────────────────────
+app.get('/api/qr', async (req, res) => {
+  const host = process.env.APP_URL || `http://localhost:${PORT}`;
+  const url = `${host}/scan`;
+  try {
+    const qrDataUrl = await QRCode.toDataURL(url, { width: 300, margin: 2, color: { dark: '#1E2D4E', light: '#FFFFFF' } });
+    res.json({ qr: qrDataUrl, url });
+  } catch(err) { res.status(500).json({ error: 'QR generate nahi hua' }); }
+});
+ 
+// ── PAGE ROUTES ────────────────────────────────────────────
+const PUB = (process.env.PUBLIC_DIR || (fs.existsSync(path.join(__dirname,'public')) ? path.join(__dirname,'public') : __dirname));
+app.get('/', (req, res) => res.sendFile(path.join(PUB, 'index.html')));
+app.get('/scan', (req, res) => res.sendFile(path.join(PUB, 'scan.html')));
+app.get('/attendance', (req, res) => res.sendFile(path.join(PUB, 'attendance.html')));
+ 
+// ── START ──────────────────────────────────────────────────
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`\n✅ Maswer Attend chal raha hai → http://localhost:${PORT}`);
+    console.log(`📱 Scan page: http://localhost:${PORT}/scan`);
+    console.log(`🔑 Login: MW113761 / 8146162102\n`);
+  });
+}).catch(err => {
+  console.error('MongoDB connect nahi hua:', err.message);
+  process.exit(1);
+});
