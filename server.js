@@ -41,18 +41,56 @@ async function connectDB() {
 }
  
 // ── Helpers ────────────────────────────────────────────────
-function today() { return new Date().toISOString().split('T')[0]; }
-function nowTime() {
-  return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+function today() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
 }
-function isLate() { return new Date().getHours() >= 9; }
+function nowTime() {
+  return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+}
 function convertTo24(timeStr) {
-  if (!timeStr) return '00:00:00';
-  const [time, modifier] = timeStr.split(' ');
-  let [hours, minutes] = time.split(':');
-  if (modifier === 'PM' && hours !== '12') hours = parseInt(hours) + 12;
-  if (modifier === 'AM' && hours === '12') hours = '00';
-  return `${String(hours).padStart(2,'0')}:${minutes}:00`;
+  if (!timeStr) return '00:00';
+  const upper = timeStr.trim().toUpperCase();
+  const match = upper.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/);
+  if (!match) return '00:00';
+  let hours = parseInt(match[1]);
+  const minutes = match[2];
+  const modifier = match[3];
+  if (modifier === 'PM' && hours !== 12) hours += 12;
+  if (modifier === 'AM' && hours === 12) hours = 0;
+  return `${String(hours).padStart(2,'0')}:${minutes}`;
+}
+ 
+// Shift definitions: start time in HH:MM (24h), grace 10 min
+const SHIFTS = {
+  'A': { start: '06:30', label: 'A Shift (6:30 AM)' },
+  'B': { start: '15:15', label: 'B Shift (3:15 PM)' },
+  'G': { start: '08:45', label: 'G Shift (8:45 AM)' },
+  'C': { start: '23:45', label: 'C Shift (11:45 PM)' }
+};
+ 
+function checkShiftStatus(shift, checkInTime24) {
+  const shiftDef = SHIFTS[shift?.toUpperCase()];
+  if (!shiftDef) return 'present';
+  const [sh, sm] = shiftDef.start.split(':').map(Number);
+  const [ch, cm] = checkInTime24.split(':').map(Number);
+  const shiftMinutes = sh * 60 + sm;
+  const checkInMinutes = ch * 60 + cm;
+  // Allow 10 min grace
+  return checkInMinutes <= shiftMinutes + 10 ? 'present' : 'late';
+}
+ 
+function calcTotalHours(inTime24, outTime24, date) {
+  try {
+    let inMs = new Date(`${date}T${inTime24}:00`).getTime();
+    let outMs = new Date(`${date}T${outTime24}:00`).getTime();
+    // If checkout is before checkin (night shift crossing midnight)
+    if (outMs < inMs) outMs += 24 * 60 * 60 * 1000;
+    const diffMs = outMs - inMs;
+    if (diffMs <= 0) return 'N/A';
+    const h = Math.floor(diffMs / 3600000);
+    const m = Math.floor((diffMs % 3600000) / 60000);
+    return `${h}h ${m}m`;
+  } catch(e) { return 'N/A'; }
 }
  
 // ── EMPLOYEE ROUTES ────────────────────────────────────────
@@ -92,16 +130,19 @@ app.get('/api/status/:empId', async (req, res) => {
  
 // ── ATTENDANCE ROUTES ──────────────────────────────────────
 app.post('/api/attendance', async (req, res) => {
-  const { empId } = req.body;
+  const { empId, shift } = req.body;
   if (!empId) return res.status(400).json({ error: 'EMP ID zaroori hai' });
   const emp = await db.collection('employees').findOne({ id: empId.toUpperCase() });
   if (!emp) return res.status(403).json({ error: 'not_listed', message: 'Aap registered nahi hain.' });
   const existing = await db.collection('attendance').findOne({ empId: emp.id, date: today() });
   if (existing) return res.status(409).json({ error: 'Aaj ki attendance pehle se mark ho chuki hai!', employee: emp });
+  const checkInTime = nowTime();
+  const checkIn24 = convertTo24(checkInTime);
+  const status = shift ? checkShiftStatus(shift, checkIn24) : 'present';
   const record = {
     id: Date.now().toString(), empId: emp.id, empName: emp.name,
-    date: today(), time: nowTime(), status: isLate() ? 'late' : 'present',
-    markedAt: new Date().toISOString()
+    date: today(), time: checkInTime, shift: shift || 'G',
+    status, markedAt: new Date().toISOString()
   };
   await db.collection('attendance').insertOne(record);
   res.json({ success: true, record, employee: emp });
@@ -117,13 +158,9 @@ app.post('/api/checkout', async (req, res) => {
   if (record.checkOut) return res.status(409).json({ error: 'already_out', message: 'Aap pehle se check-out kar chuke hain!', record, employee: emp });
  
   const checkOut = nowTime();
-  let totalHours = 'N/A';
-  try {
-    const inTime = new Date(`${today()}T${convertTo24(record.time)}`);
-    const outTime = new Date(`${today()}T${convertTo24(checkOut)}`);
-    const diffMs = outTime - inTime;
-    totalHours = `${Math.floor(diffMs/3600000)}h ${Math.floor((diffMs%3600000)/60000)}m`;
-  } catch(e) {}
+  const checkOut24 = convertTo24(checkOut);
+  const checkIn24 = convertTo24(record.time);
+  const totalHours = calcTotalHours(checkIn24, checkOut24, record.date || today());
  
   await db.collection('attendance').updateOne(
     { id: record.id },
