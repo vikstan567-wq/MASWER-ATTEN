@@ -8,85 +8,58 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
 :root{--brand:#F05A22;--dark:#1E2D4E;--border:#e2e4ea;--text:#1a1a2e;--muted:#7b8299;}
 body{min-height:100vh;background:linear-gradient(160deg,#1E2D4E 0%,#253b6e 60%,#1a1a2e 100%);display:flex;align-items:center;justify-content:center;padding:20px;}
- 
 .card{background:#fff;border-radius:24px;width:100%;max-width:360px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,0.35);}
- 
-/* header */
 .card-header{background:linear-gradient(135deg,#1E2D4E,#2d4a7a);padding:22px;text-align:center;}
 .logo-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:4px;}
 .logo-row .plus{font-size:24px;font-weight:900;color:var(--brand);}
 .logo-row .name{font-size:20px;font-weight:700;color:#fff;}
 .logo-row .tag{font-size:10px;background:var(--brand);color:#fff;border-radius:5px;padding:3px 7px;font-weight:700;}
 .sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;}
- 
-/* form */
-.form-body{padding:26px;}
-.time-bar{background:linear-gradient(90deg,#EAF3DE,#f5faf0);border-radius:10px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+.form-body{padding:22px;}
+.time-bar{background:linear-gradient(90deg,#EAF3DE,#f5faf0);border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
 .time-bar .tbl{font-size:11px;color:#3B6D11;font-weight:600;}
 .time-bar .tval{font-size:15px;font-weight:700;color:#3B6D11;}
- 
 .field{margin-bottom:14px;}
 .field label{font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px;}
 .field .req{color:var(--brand);}
-.field input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:11px;font-size:15px;outline:none;color:var(--text);transition:border 0.2s,box-shadow 0.2s;}
+.field input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:11px;font-size:15px;outline:none;color:var(--text);transition:border 0.2s;}
 .field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(240,90,34,0.1);}
 .field .hint{font-size:11px;color:var(--muted);margin-top:4px;}
+.shift-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .shift-btn{padding:10px 8px;border:2px solid var(--border);border-radius:10px;background:#f8f9fb;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);transition:all 0.15s;text-align:center;line-height:1.4;}
 .shift-btn:hover{border-color:var(--brand);background:#fff8f5;}
 .shift-btn.active{border-color:var(--brand);background:#FFF0EA;color:var(--brand);}
 .shift-btn small{font-size:10px;font-weight:400;color:var(--muted);display:block;}
 .shift-btn.active small{color:var(--brand);}
- 
-/* name field - shown only when first time */
-#nameField{display:none;}
- 
-/* STATUS BADGE */
 #statusBadge{display:none;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;font-weight:700;text-align:center;line-height:1.5;}
 #statusBadge.in-mode{background:#EAF3DE;color:#3B6D11;border:1.5px solid #b8dda0;}
 #statusBadge.out-mode{background:#EAF0FB;color:#1E2D4E;border:1.5px solid #a5b4e8;}
 #statusBadge.done-mode{background:#FFF3E6;color:#8B4000;border:1.5px solid #f5c896;}
- 
-.note-box{background:#E6F1FB;border-radius:10px;padding:10px 13px;margin-bottom:16px;font-size:11px;color:#185FA5;line-height:1.7;}
-.note-box strong{display:block;margin-bottom:2px;}
- 
-/* MAIN SMART BUTTON */
-.submit-btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;color:#fff;}
+#statusBadge.warn-mode{background:#FEECEC;color:#A32D2D;border:1.5px solid #f5a5a5;}
+.loc-bar{background:#f0f2f5;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#7b8299;display:flex;align-items:center;gap:8px;}
+.submit-btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;color:#fff;}
 .submit-btn.in-btn{background:#F05A22;}
-.submit-btn.in-btn:hover{background:#d44d1a;transform:translateY(-1px);box-shadow:0 6px 18px rgba(240,90,34,0.35);}
+.submit-btn.in-btn:hover{background:#d44d1a;transform:translateY(-1px);}
 .submit-btn.out-btn{background:#1E2D4E;}
-.submit-btn.out-btn:hover{background:#162240;transform:translateY(-1px);box-shadow:0 6px 18px rgba(30,45,78,0.35);}
-.submit-btn:active{transform:scale(0.98);}
-.submit-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;box-shadow:none;opacity:0.7;}
- 
+.submit-btn.out-btn:hover{background:#162240;transform:translateY(-1px);}
+.submit-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;opacity:0.7;}
 .err-msg{color:#e24b4a;font-size:12px;text-align:center;margin-top:10px;min-height:16px;font-weight:600;}
-.view-link{text-align:center;margin-top:14px;font-size:12px;color:var(--muted);}
-.view-link a{color:var(--brand);font-weight:700;text-decoration:none;}
- 
-/* overlays */
 .overlay{position:fixed;inset:0;background:rgba(20,35,65,0.94);z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;}
 .overlay.show{display:flex;}
-.thumb-emoji{font-size:90px;animation:thumbPop 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:center bottom;}
+.thumb-emoji{font-size:90px;animation:thumbPop 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;}
 @keyframes thumbPop{0%{transform:scale(0) rotate(-30deg);opacity:0;}60%{transform:scale(1.25) rotate(8deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
-.confetti-row{display:flex;gap:8px;margin-top:10px;animation:fadeUp 0.5s 0.3s both;}
-.conf{font-size:22px;animation:confettiBounce 0.8s ease infinite alternate;}
-.conf:nth-child(2){animation-delay:0.15s;}
-.conf:nth-child(3){animation-delay:0.3s;}
-@keyframes confettiBounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
-.ov-name{margin-top:18px;font-size:22px;font-weight:700;color:#fff;animation:fadeUp 0.5s 0.35s both;}
-.ov-msg{margin-top:6px;font-size:14px;color:rgba(255,255,255,0.7);animation:fadeUp 0.5s 0.5s both;line-height:1.6;}
-.ov-time{margin-top:8px;font-size:13px;color:rgba(255,255,255,0.5);animation:fadeUp 0.5s 0.6s both;}
-.ov-btn{margin-top:26px;padding:14px 32px;background:var(--brand);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;animation:fadeUp 0.5s 0.75s both;transition:all 0.2s;}
-.ov-btn:hover{background:#d44d1a;transform:translateY(-1px);}
-.ov-back{margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer;animation:fadeUp 0.4s 0.9s both;}
+.confetti-row{display:flex;gap:8px;margin-top:10px;}
+.ov-name{margin-top:18px;font-size:22px;font-weight:700;color:#fff;}
+.ov-msg{margin-top:6px;font-size:14px;color:rgba(255,255,255,0.7);line-height:1.6;}
+.ov-time{margin-top:8px;font-size:13px;color:rgba(255,255,255,0.5);}
+.ov-btn{margin-top:26px;padding:14px 32px;background:var(--brand);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.ov-back{margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer;}
 .ov-back:hover{color:rgba(255,255,255,0.7);}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
- 
 .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
- 
 <div class="card">
   <div class="card-header">
     <div class="logo-row">
@@ -106,103 +79,90 @@ body{min-height:100vh;background:linear-gradient(160deg,#1E2D4E 0%,#253b6e 60%,#
       <div class="hint">Admin ne diya hua EMP ID bharein</div>
     </div>
  
-    <!-- Shift Selector -->
-    <div class="field" id="shiftField">
-      <label>Apni Shift Select Karein <span class="req">*</span></label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="shiftGrid">
-        <button type="button" class="shift-btn" onclick="selectShift('A')" id="shift-A">
-          🌅 A Shift<br><small>6:30 AM</small>
-        </button>
-        <button type="button" class="shift-btn" onclick="selectShift('B')" id="shift-B">
-          🌤️ B Shift<br><small>3:15 PM</small>
-        </button>
-        <button type="button" class="shift-btn" onclick="selectShift('G')" id="shift-G">
-          ☀️ G Shift<br><small>8:45 AM</small>
-        </button>
-        <button type="button" class="shift-btn" onclick="selectShift('C')" id="shift-C">
-          🌙 C Shift<br><small>11:45 PM</small>
-        </button>
+    <div class="field" id="shiftField" style="display:none;">
+      <label>Apni Shift <span class="req">*</span></label>
+      <div class="shift-grid">
+        <button type="button" class="shift-btn" onclick="selectShift('A')" id="shift-A">🌅 A Shift<br><small>6:30 AM</small></button>
+        <button type="button" class="shift-btn" onclick="selectShift('B')" id="shift-B">🌤️ B Shift<br><small>3:15 PM</small></button>
+        <button type="button" class="shift-btn" onclick="selectShift('G')" id="shift-G">☀️ G Shift<br><small>8:45 AM</small></button>
+        <button type="button" class="shift-btn" onclick="selectShift('C')" id="shift-C">🌙 C Shift<br><small>11:45 PM</small></button>
       </div>
-      <div class="hint">Sahi shift select karna zaroori hai</div>
     </div>
  
-    <!-- Shown only for first-time / unrecognized employees -->
-    <div class="field" id="nameField">
-      <label>Full Name</label>
-      <input type="text" id="empName" placeholder="Aapka poora naam"/>
-      <div class="hint">Pehli baar hai to naam zaroori hai</div>
-    </div>
- 
-    <!-- Smart status badge -->
     <div id="statusBadge"></div>
  
-    <div id="locationStatus" style="background:#f0f2f5;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#7b8299;display:flex;align-items:center;gap:8px;">
+    <div class="loc-bar" id="locationStatus">
       <span id="locIcon">📍</span>
       <span id="locText">Location check ho raha hai...</span>
     </div>
  
-    <!-- Single smart button -->
     <button class="submit-btn in-btn" id="mainBtn" onclick="smartSubmit()" disabled style="opacity:0.6;">
       ✓ Attendance Darj Karein
     </button>
     <div class="err-msg" id="errMsg"></div>
-    <div class="view-link">Attendance dekhni hai? <a href="/attendance">Yahan dekhein →</a></div>
   </div>
 </div>
  
-<!-- PUNCH IN SUCCESS OVERLAY -->
+<!-- PUNCH IN SUCCESS -->
 <div class="overlay" id="punchInOverlay">
   <div class="thumb-emoji">👍</div>
-  <div class="confetti-row"><span class="conf">🎉</span><span class="conf">✨</span><span class="conf">🎊</span></div>
+  <div class="confetti-row"><span style="font-size:22px;">🎉</span><span style="font-size:22px;">✨</span><span style="font-size:22px;">🎊</span></div>
   <div class="ov-name" id="piName">—</div>
   <div class="ov-msg" id="piMsg">Punch In ho gaya!</div>
   <div class="ov-time" id="piTime">—</div>
-  <button class="ov-btn" onclick="goToView()">📊 Meri attendance dekhein →</button>
-  <div class="ov-back" onclick="resetForm()">← Kisi aur ki attendance deni hai?</div>
+  <button class="ov-btn" onclick="resetForm()">← Wapas</button>
 </div>
  
-<!-- PUNCH OUT SUCCESS OVERLAY -->
+<!-- PUNCH OUT SUCCESS -->
 <div class="overlay" id="punchOutOverlay">
-  <div style="font-size:80px;animation:thumbPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;">👋</div>
-  <div class="confetti-row"><span class="conf">✅</span><span class="conf">🏠</span><span class="conf">✅</span></div>
+  <div style="font-size:80px;">👋</div>
+  <div class="confetti-row"><span style="font-size:22px;">✅</span><span style="font-size:22px;">🏠</span><span style="font-size:22px;">✅</span></div>
   <div class="ov-name" id="poName">—</div>
   <div class="ov-msg">Punch Out ho gaya! Ghar jaiye aaram se 😊</div>
   <div class="ov-time" id="poTime">—</div>
-  <button class="ov-btn" onclick="goToView()">📊 Meri attendance dekhein →</button>
-  <div class="ov-back" onclick="resetForm()">← Wapas</div>
+  <button class="ov-btn" onclick="resetForm()">← Wapas</button>
 </div>
  
-<!-- NOT REGISTERED OVERLAY -->
+<!-- NOT REGISTERED -->
 <div class="overlay" id="notListedOverlay">
   <div style="font-size:70px;">🚫</div>
   <div class="ov-name" style="color:#FF6B6B;">Registered Nahi Hai</div>
-  <div class="ov-msg"><span id="notListedId"></span> is system mein nahi hai.<br/>Apne admin se contact karein.</div>
+  <div class="ov-msg"><span id="notListedId"></span> system mein nahi hai.<br/>Admin se contact karein.</div>
   <div class="ov-back" style="margin-top:30px;" onclick="document.getElementById('notListedOverlay').classList.remove('show');resetForm()">← Wapas</div>
 </div>
  
 <script>
-let markedEmpId = '';
 let selectedShift = '';
-let currentMode = 'punch_in'; // 'punch_in' | 'punch_out'
+let currentMode = 'punch_in';
+let locationAllowed = false;
+let locationChecked = false;
 let statusCheckTimer = null;
  
 // Live clock
 function updateClock() {
   document.getElementById('liveClock').textContent =
-    new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+    new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true, timeZone:'Asia/Kolkata' });
 }
 updateClock();
 setInterval(updateClock, 1000);
  
-// ── SMART STATUS CHECK ──────────────────────────────────
+// Check device session on load
+async function checkDeviceSession() {
+  try {
+    const res = await fetch('/api/device-session');
+    const data = await res.json();
+    if (data.hasSession) {
+      document.getElementById('empId').value = data.empId;
+      document.getElementById('empId').readOnly = true;
+      applyStatus({ status: 'punch_out', employee: { name: data.empName, id: data.empId }, record: data.record });
+    }
+  } catch(e) {}
+}
+ 
 function onEmpIdChange() {
   clearTimeout(statusCheckTimer);
   const empId = document.getElementById('empId').value.trim();
-  if (empId.length < 2) {
-    resetBadge();
-    return;
-  }
-  // Debounce 600ms after user stops typing
+  if (empId.length < 2) { resetBadge(); return; }
   statusCheckTimer = setTimeout(() => checkStatus(empId), 600);
 }
  
@@ -211,49 +171,49 @@ async function checkStatus(empId) {
     const res = await fetch('/api/status/' + encodeURIComponent(empId.toUpperCase()));
     const data = await res.json();
     applyStatus(data);
-  } catch(e) {
-    // If status check fails, default to punch_in mode
-    applyStatus({ status: 'punch_in' });
-  }
+  } catch(e) { applyStatus({ status: 'punch_in' }); }
 }
  
 function applyStatus(data) {
   const badge = document.getElementById('statusBadge');
-  const btn = document.getElementById('mainBtn');
-  const nameField = document.getElementById('nameField');
- 
+  const shiftField = document.getElementById('shiftField');
   badge.style.display = 'block';
-  nameField.style.display = 'none';
  
   if (data.status === 'not_registered') {
-    // Show name field in case it's a new employee typo or first scan
     badge.className = 'done-mode';
-    badge.innerHTML = '⚠️ Yeh EMP ID system mein nahi hai<br/><small style="font-weight:400;font-size:11px;">Admin se apna EMP ID confirm karein</small>';
-    setButtonIn();
-    currentMode = 'punch_in';
+    badge.innerHTML = '⚠️ Yeh EMP ID registered nahi hai<br><small style="font-weight:400;font-size:11px;">Admin se confirm karein</small>';
+    setButtonIn(); currentMode = 'punch_in';
+    shiftField.style.display = 'block';
  
   } else if (data.status === 'punch_in') {
     badge.className = 'in-mode';
-    badge.innerHTML = `🟢 ${data.employee?.name || ''} — Aaj check-in nahi kiya<br/><small style="font-weight:400;font-size:11px;">Punch In button dabayein</small>`;
-    setButtonIn();
-    currentMode = 'punch_in';
+    badge.innerHTML = `🟢 ${data.employee?.name || ''} — Aaj check-in nahi kiya<br><small style="font-weight:400;font-size:11px;">Shift select karke Punch In karein</small>`;
+    setButtonIn(); currentMode = 'punch_in';
+    shiftField.style.display = 'block';
  
   } else if (data.status === 'punch_out') {
-    const inTime = data.record?.time || '';
     badge.className = 'out-mode';
-    badge.innerHTML = `🔵 ${data.employee?.name || ''} — Check-in: ${inTime}<br/><small style="font-weight:400;font-size:11px;">Punch Out karne ke liye button dabayein</small>`;
-    setButtonOut();
-    currentMode = 'punch_out';
+    badge.innerHTML = `🔵 ${data.employee?.name || ''} — Check-in: ${data.record?.time || ''} (${data.record?.shift || ''})<br><small style="font-weight:400;font-size:11px;">Punch Out karein</small>`;
+    setButtonOut(); currentMode = 'punch_out';
+    shiftField.style.display = 'none';
+ 
+  } else if (data.status === 'different_device') {
+    badge.className = 'warn-mode';
+    badge.innerHTML = `⚠️ ${data.employee?.name || ''} ki attendance kisi aur phone se mark hui hai<br><small style="font-weight:400;font-size:11px;">Punch out usi phone se karein</small>`;
+    const btn = document.getElementById('mainBtn');
+    btn.disabled = true; btn.style.opacity = '0.5';
+    currentMode = 'blocked';
+    shiftField.style.display = 'none';
  
   } else if (data.status === 'already_out') {
-    const outTime = data.record?.checkOut || '';
     badge.className = 'done-mode';
-    badge.innerHTML = `✅ ${data.employee?.name || ''} — Aaj ka kaam khatam (Check-out: ${outTime})<br/><small style="font-weight:400;font-size:11px;">Kal aane par wapas Punch In kar sakte hain</small>`;
-    // Disable button - already done for today
-    btn.disabled = true;
+    badge.innerHTML = `✅ ${data.employee?.name || ''} — Aaj ka kaam khatam<br><small style="font-weight:400;font-size:11px;">Kal aane par wapas Punch In kar sakte hain</small>`;
+    const btn = document.getElementById('mainBtn');
+    btn.disabled = true; btn.style.opacity = '0.5';
     btn.className = 'submit-btn in-btn';
     btn.innerHTML = '✅ Aaj ka kaam khatam';
     currentMode = 'already_out';
+    shiftField.style.display = 'none';
   }
 }
  
@@ -263,23 +223,18 @@ function setButtonIn() {
   btn.innerHTML = '🟢 Punch In – Attendance Darj Karein';
   if (locationAllowed) { btn.disabled = false; btn.style.opacity = '1'; }
 }
- 
 function setButtonOut() {
   const btn = document.getElementById('mainBtn');
   btn.className = 'submit-btn out-btn';
   btn.innerHTML = '🔵 Punch Out – Check-Out Karein';
   if (locationAllowed) { btn.disabled = false; btn.style.opacity = '1'; }
 }
- 
 function resetBadge() {
-  const badge = document.getElementById('statusBadge');
-  badge.style.display = 'none';
-  badge.innerHTML = '';
-  setButtonIn();
-  currentMode = 'punch_in';
+  document.getElementById('statusBadge').style.display = 'none';
+  document.getElementById('shiftField').style.display = 'none';
+  setButtonIn(); currentMode = 'punch_in';
 }
  
-// ── SMART SUBMIT ────────────────────────────────────────
 function selectShift(shift) {
   selectedShift = shift;
   document.querySelectorAll('.shift-btn').forEach(b => b.classList.remove('active'));
@@ -287,35 +242,26 @@ function selectShift(shift) {
 }
  
 async function smartSubmit() {
-  if (currentMode === 'punch_out') {
-    await doPunchOut();
-  } else if (currentMode === 'punch_in') {
-    await doPunchIn();
-  }
+  if (currentMode === 'punch_out') await doPunchOut();
+  else if (currentMode === 'punch_in') await doPunchIn();
 }
  
 async function doPunchIn() {
   const empId = document.getElementById('empId').value.trim().toUpperCase();
-  const name = document.getElementById('empName').value.trim();
   const errEl = document.getElementById('errMsg');
   const btn = document.getElementById('mainBtn');
- 
   if (!empId) { errEl.textContent = '❌ EMP ID zaroori hai.'; return; }
   if (!selectedShift) { errEl.textContent = '❌ Pehle apni shift select karein!'; return; }
-  if (!locationAllowed) {
-    errEl.textContent = '🚫 Aap office location par nahi hain!';
-    return;
-  }
+  if (!locationAllowed) { errEl.textContent = '🚫 Location allow karein — attendance tab hi lagegi!'; return; }
  
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Register ho raha hai...';
+  btn.innerHTML = '<span class="spinner"></span> Mark ho raha hai...';
   errEl.textContent = '';
  
   try {
     const res = await fetch('/api/attendance', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ empId, name, shift: selectedShift })
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ empId, shift: selectedShift })
     });
     const data = await res.json();
  
@@ -324,22 +270,21 @@ async function doPunchIn() {
       document.getElementById('notListedOverlay').classList.add('show');
       btn.disabled = false; setButtonIn(); return;
     }
- 
+    if (res.status === 409 && data.error === 'device_busy') {
+      errEl.textContent = '❌ ' + data.message;
+      btn.disabled = false; setButtonIn(); return;
+    }
     if (!res.ok) {
       errEl.textContent = '❌ ' + (data.error || 'Kuch galat hua');
       btn.disabled = false; setButtonIn(); return;
     }
  
-    // SUCCESS PUNCH IN
-    markedEmpId = data.employee.id;
     const rec = data.record;
-    const isLate = rec.status === 'late';
     document.getElementById('piName').textContent = data.employee.name;
-    const shiftLabel = {'A':'A Shift (6:30 AM)','B':'B Shift (3:15 PM)','G':'G Shift (8:45 AM)','C':'C Shift (11:45 PM)'}[selectedShift] || '';
-    document.getElementById('piMsg').textContent = isLate
-      ? 'Attendance register ho gayi! Kal time pe aana 😊'
-      : 'Aap aaj on time hain! Bahut badhiya 👏';
-    document.getElementById('piTime').textContent = `${shiftLabel} · Punch In: ${rec.time} · ${rec.status === 'late' ? 'Late ⚠️' : 'Present ✅'}`;
+    document.getElementById('piMsg').textContent = rec.status === 'late'
+      ? `${rec.shift} Shift — Aap thoda late aaye! ⚠️`
+      : `${rec.shift} Shift — Aap time pe hain! 👏`;
+    document.getElementById('piTime').textContent = `Punch In: ${rec.time} · ${rec.status === 'late' ? 'Late' : 'Present ✅'}`;
     document.getElementById('punchInOverlay').classList.add('show');
  
   } catch(e) {
@@ -352,7 +297,6 @@ async function doPunchOut() {
   const empId = document.getElementById('empId').value.trim().toUpperCase();
   const errEl = document.getElementById('errMsg');
   const btn = document.getElementById('mainBtn');
- 
   if (!empId) { errEl.textContent = '❌ EMP ID zaroori hai.'; return; }
  
   btn.disabled = true;
@@ -361,22 +305,22 @@ async function doPunchOut() {
  
   try {
     const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ empId })
     });
     const data = await res.json();
  
+    if (res.status === 403 && data.error === 'wrong_device') {
+      errEl.textContent = '❌ ' + data.message;
+      btn.disabled = false; setButtonOut(); return;
+    }
     if (!res.ok) {
       errEl.textContent = '❌ ' + (data.message || data.error);
       btn.disabled = false; setButtonOut(); return;
     }
  
-    // SUCCESS PUNCH OUT
-    markedEmpId = data.employee.id;
     document.getElementById('poName').textContent = data.employee.name;
-    document.getElementById('poTime').textContent =
-      `Check-out: ${data.record.checkOut} · Kaam kiya: ${data.record.totalHours}`;
+    document.getElementById('poTime').textContent = `Check-out: ${data.record.checkOut} · Kaam: ${data.record.totalHours}`;
     document.getElementById('punchOutOverlay').classList.add('show');
  
   } catch(e) {
@@ -385,110 +329,105 @@ async function doPunchOut() {
   }
 }
  
-function goToView() {
-  if (markedEmpId) window.location.href = '/attendance?id=' + markedEmpId;
-}
- 
 function resetForm() {
   document.getElementById('punchInOverlay').classList.remove('show');
   document.getElementById('punchOutOverlay').classList.remove('show');
-  document.getElementById('empId').value = '';
+  const empInput = document.getElementById('empId');
+  empInput.value = ''; empInput.readOnly = false;
+  document.getElementById('errMsg').textContent = '';
+  document.getElementById('shiftField').style.display = 'none';
+  document.getElementById('statusBadge').style.display = 'none';
   selectedShift = '';
   document.querySelectorAll('.shift-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('empName').value = '';
-  document.getElementById('errMsg').textContent = '';
-  document.getElementById('nameField').style.display = 'none';
-  resetBadge();
-  document.getElementById('empId').focus();
+  setButtonIn();
+  empInput.focus();
 }
  
-// Enter key support
 document.getElementById('empId').addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const nameF = document.getElementById('nameField');
-    if (nameF.style.display !== 'none') document.getElementById('empName').focus();
-    else smartSubmit();
-  }
-});
-document.getElementById('empName').addEventListener('keydown', e => {
   if (e.key === 'Enter') smartSubmit();
 });
  
-// ── GEOFENCING ──────────────────────────────────────────
-let locationAllowed = false;
- 
+// ── LOCATION ──────────────────────────────────────────────
 function getDistance(lat1, lng1, lat2, lng2) {
   const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
  
 async function checkLocation() {
   const locIcon = document.getElementById('locIcon');
   const locText = document.getElementById('locText');
+  const locBar = document.getElementById('locationStatus');
   const btn = document.getElementById('mainBtn');
  
-  if (!navigator.geolocation) {
-    locIcon.textContent = '⚠️';
-    locText.textContent = 'GPS supported nahi hai';
-    document.getElementById('locationStatus').style.background = '#FAEEDA';
-    locText.style.color = '#854F0B';
+  // Check if location is set on server
+  let locData = {};
+  try {
+    const r = await fetch('/api/location');
+    locData = await r.json();
+  } catch(e) {}
+ 
+  // If no location set — allow attendance
+  if (!locData.lat || !locData.lng) {
+    locIcon.textContent = '✅';
+    locText.textContent = 'Location check nahi hai (admin ne set nahi ki)';
+    locBar.style.background = '#EAF3DE';
+    locText.style.color = '#3B6D11';
     locationAllowed = true;
-    btn.disabled = false; btn.style.opacity = '1';
+    if (currentMode !== 'already_out' && currentMode !== 'blocked') {
+      btn.disabled = false; btn.style.opacity = '1';
+    }
     return;
   }
  
+  // Location is set — GPS check mandatory
+  if (!navigator.geolocation) {
+    locIcon.textContent = '🚫';
+    locText.textContent = 'GPS support nahi hai — attendance nahi lag sakti!';
+    locBar.style.background = '#FCEBEB';
+    locText.style.color = '#A32D2D';
+    locationAllowed = false;
+    return;
+  }
+ 
+  locText.textContent = 'GPS location check ho rahi hai...';
+ 
   navigator.geolocation.getCurrentPosition(async (pos) => {
-    const userLat = pos.coords.latitude;
-    const userLng = pos.coords.longitude;
-    try {
-      const res = await fetch('/api/location');
-      const data = await res.json();
-      if (!data.lat || !data.lng) {
-        locIcon.textContent = '✅';
-        locText.textContent = 'Location OK (admin ne set nahi ki)';
-        document.getElementById('locationStatus').style.background = '#EAF3DE';
-        locText.style.color = '#3B6D11';
-        locationAllowed = true;
-        btn.disabled = false; btn.style.opacity = '1';
-        return;
-      }
-      const distance = getDistance(userLat, userLng, parseFloat(data.lat), parseFloat(data.lng));
-      const radius = data.radius || 100;
-      if (distance <= radius) {
-        locIcon.textContent = '✅';
-        locText.textContent = `Aap office mein hain! (${Math.round(distance)}m)`;
-        document.getElementById('locationStatus').style.background = '#EAF3DE';
-        locText.style.color = '#3B6D11';
-        locationAllowed = true;
-        btn.disabled = false; btn.style.opacity = '1';
-      } else {
-        locIcon.textContent = '🚫';
-        locText.textContent = `Aap office se ${Math.round(distance)}m door hain!`;
-        document.getElementById('locationStatus').style.background = '#FCEBEB';
-        locText.style.color = '#A32D2D';
-        locationAllowed = false;
-        btn.disabled = true; btn.style.opacity = '0.5';
-      }
-    } catch(e) {
+    const dist = getDistance(pos.coords.latitude, pos.coords.longitude, locData.lat, locData.lng);
+    const radius = locData.radius || 100;
+ 
+    if (dist <= radius) {
+      locIcon.textContent = '✅';
+      locText.textContent = `${locData.name || 'Office'} mein hain (${Math.round(dist)}m)`;
+      locBar.style.background = '#EAF3DE';
+      locText.style.color = '#3B6D11';
       locationAllowed = true;
-      btn.disabled = false; btn.style.opacity = '1';
+      if (currentMode !== 'already_out' && currentMode !== 'blocked') {
+        btn.disabled = false; btn.style.opacity = '1';
+      }
+    } else {
+      locIcon.textContent = '🚫';
+      locText.textContent = `Aap ${locData.name || 'office'} se ${Math.round(dist)}m door hain! Attendance nahi lagi.`;
+      locBar.style.background = '#FCEBEB';
+      locText.style.color = '#A32D2D';
+      locationAllowed = false;
+      btn.disabled = true; btn.style.opacity = '0.5';
     }
-  }, () => {
-    locIcon.textContent = '⚠️';
-    locText.textContent = 'GPS access denied — allow hone par bhi chalega';
-    document.getElementById('locationStatus').style.background = '#FAEEDA';
-    locText.style.color = '#854F0B';
-    locationAllowed = true;
-    btn.disabled = false; btn.style.opacity = '1';
-  }, { enableHighAccuracy: true, timeout: 10000 });
+  }, (err) => {
+    locIcon.textContent = '🚫';
+    locText.textContent = 'GPS access denied — location allow karein!';
+    locBar.style.background = '#FCEBEB';
+    locText.style.color = '#A32D2D';
+    locationAllowed = false;
+    btn.disabled = true; btn.style.opacity = '0.5';
+  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
 }
  
+// Init
 checkLocation();
+checkDeviceSession();
 </script>
 </body>
 </html>
