@@ -138,6 +138,17 @@ let locationAllowed = false;
 let locationChecked = false;
 let statusCheckTimer = null;
  
+// Generate/get stable device ID stored in localStorage
+function getDeviceId() {
+  let did = localStorage.getItem('mw_device_id');
+  if (!did) {
+    did = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+    localStorage.setItem('mw_device_id', did);
+  }
+  return did;
+}
+const DEVICE_ID = getDeviceId();
+ 
 // Live clock
 function updateClock() {
   document.getElementById('liveClock').textContent =
@@ -149,7 +160,7 @@ setInterval(updateClock, 1000);
 // Check device session on load
 async function checkDeviceSession() {
   try {
-    const res = await fetch('/api/device-session');
+    const res = await fetch('/api/device-session?did=' + DEVICE_ID);
     const data = await res.json();
     if (data.hasSession) {
       document.getElementById('empId').value = data.empId;
@@ -168,7 +179,7 @@ function onEmpIdChange() {
  
 async function checkStatus(empId) {
   try {
-    const res = await fetch('/api/status/' + encodeURIComponent(empId.toUpperCase()));
+    const res = await fetch('/api/status/' + encodeURIComponent(empId.toUpperCase()) + '?did=' + DEVICE_ID);
     const data = await res.json();
     applyStatus(data);
   } catch(e) { applyStatus({ status: 'punch_in' }); }
@@ -261,7 +272,7 @@ async function doPunchIn() {
   try {
     const res = await fetch('/api/attendance', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ empId, shift: selectedShift })
+      body: JSON.stringify({ empId, shift: selectedShift, deviceId: DEVICE_ID })
     });
     const data = await res.json();
  
@@ -306,7 +317,7 @@ async function doPunchOut() {
   try {
     const res = await fetch('/api/checkout', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ empId })
+      body: JSON.stringify({ empId, deviceId: DEVICE_ID })
     });
     const data = await res.json();
  
