@@ -4,19 +4,15 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Maswer Attend – Admin</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
 :root{--brand:#F05A22;--dark:#1E2D4E;--border:#e2e4ea;--text:#1a1a2e;--muted:#7b8299;--gray:#f5f6fa;}
 body{background:#f0f2f5;min-height:100vh;}
-
-/* LOGIN */
 #loginPage{min-height:100vh;background:linear-gradient(135deg,#1E2D4E,#2d4a7a);display:flex;align-items:center;justify-content:center;}
 .login-card{background:#fff;border-radius:24px;width:360px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
 .anim-stage{height:190px;background:linear-gradient(180deg,#dce8f8,#f0f5ff);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
 .floor-line{position:absolute;bottom:0;left:0;right:0;height:2px;background:#c8d4e8;}
-/* walking figure */
-.figure{position:absolute;bottom:2px;display:flex;flex-direction:column;align-items:center;transition:right 0.05s linear;}
+.figure{position:absolute;bottom:2px;display:flex;flex-direction:column;align-items:center;}
 .fig-head{width:28px;height:28px;background:var(--dark);border-radius:50%;margin-bottom:2px;}
 .fig-body{width:36px;height:38px;background:var(--dark);border-radius:5px 5px 0 0;position:relative;}
 .fig-legs{display:flex;gap:4px;margin-top:1px;}
@@ -31,15 +27,13 @@ body{background:#f0f2f5;min-height:100vh;}
 .login-subtitle{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:18px;}
 .field{margin-bottom:13px;}
 .field label{font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:5px;}
-.field input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;outline:none;color:var(--text);}
-.field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(240,90,34,0.1);}
+.field input,.field select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;outline:none;color:var(--text);}
+.field input:focus,.field select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(240,90,34,0.1);}
 .login-btn{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;}
 .login-btn:hover{background:#d44d1a;}
 .login-err{color:#e24b4a;font-size:12px;text-align:center;margin-top:8px;min-height:16px;}
 .emp-link{text-align:center;margin-top:10px;font-size:12px;color:var(--muted);}
 .emp-link a{color:var(--brand);font-weight:600;text-decoration:none;}
-
-/* ADMIN LAYOUT */
 #adminPage{display:none;flex-direction:row;min-height:100vh;}
 .sidebar{width:220px;background:var(--dark);color:#fff;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;}
 .sb-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:6px;}
@@ -49,7 +43,7 @@ body{background:#f0f2f5;min-height:100vh;}
 .sb-user{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);}
 .sb-user .sun{font-size:12px;font-weight:600;}
 .sb-user .sur{font-size:10px;color:rgba(255,255,255,0.45);}
-.sb-nav{flex:1;padding:10px 0;}
+.sb-nav{flex:1;padding:10px 0;overflow-y:auto;}
 .nav-i{display:flex;align-items:center;gap:9px;padding:10px 16px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;border-left:3px solid transparent;transition:all 0.2s;}
 .nav-i:hover{background:rgba(255,255,255,0.07);color:#fff;}
 .nav-i.on{background:rgba(240,90,34,0.15);color:#fff;border-left-color:var(--brand);}
@@ -64,42 +58,30 @@ body{background:#f0f2f5;min-height:100vh;}
 .content{padding:22px;overflow-y:auto;flex:1;}
 .panel{display:none;}
 .panel.on{display:block;}
-
-/* STATS ROW */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 .stat-box{background:#fff;border-radius:12px;padding:14px 16px;border:1px solid var(--border);}
 .stat-box .sv{font-size:26px;font-weight:700;}
 .stat-box .sl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-top:2px;}
 .g{color:#3B6D11;}.r{color:#A32D2D;}.a{color:#854F0B;}.b{color:#185FA5;}
-
-/* CARD */
 .card{background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px;}
-.card-top{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-top{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 .card-top h3{font-size:14px;font-weight:700;color:var(--text);}
 .btn{padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;}
 .btn-green{background:#EAF3DE;color:#3B6D11;}.btn-green:hover{background:#3B6D11;color:#fff;}
 .btn-orange{background:var(--brand);color:#fff;}.btn-orange:hover{background:#d44d1a;}
 .btn-blue{background:#E6F1FB;color:#185FA5;}.btn-blue:hover{background:#185FA5;color:#fff;}
-.btn-gap{display:flex;gap:8px;}
-
-/* FILTER BAR */
+.btn-gap{display:flex;gap:8px;flex-wrap:wrap;}
 .fbar{padding:12px 16px 4px;display:flex;gap:8px;flex-wrap:wrap;}
 .fbar input,.fbar select{padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;outline:none;color:var(--text);}
 .fbar input{flex:1;min-width:160px;}
 .fbar input:focus,.fbar select:focus{border-color:var(--brand);}
-
-/* TABLE */
 .tbl{width:100%;border-collapse:collapse;font-size:13px;}
 .tbl th{padding:9px 14px;text-align:left;background:#f8f9fc;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
 .tbl td{padding:10px 14px;border-top:1px solid var(--border);color:var(--text);vertical-align:middle;}
 .tbl tr:hover td{background:#fafbff;}
 .badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
-.bp{background:#EAF3DE;color:#3B6D11;}
-.ba{background:#FCEBEB;color:#A32D2D;}
-.bl{background:#FAEEDA;color:#854F0B;}
+.bp{background:#EAF3DE;color:#3B6D11;}.ba{background:#FCEBEB;color:#A32D2D;}.bl{background:#FAEEDA;color:#854F0B;}
 .av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-right:7px;vertical-align:middle;}
-
-/* CHARTS */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
 .chart-card{background:#fff;border-radius:13px;border:1px solid var(--border);padding:16px;}
 .chart-card h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;}
@@ -107,13 +89,18 @@ body{background:#f0f2f5;min-height:100vh;}
 .pie-legend{display:flex;flex-direction:column;gap:7px;}
 .pl-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);}
 .pl-dot{width:9px;height:9px;border-radius:50%;}
-.bars{display:flex;align-items:flex-end;gap:7px;height:90px;}
+.bars{display:flex;align-items:flex-end;gap:5px;height:90px;}
 .bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
-.bar-fill{width:100%;border-radius:3px 3px 0 0;}
+.bar-fill{width:100%;border-radius:3px 3px 0 0;min-height:2px;}
 .bar-lbl{font-size:9px;color:var(--muted);}
 .bar-val{font-size:9px;font-weight:700;color:var(--text);}
-
-/* EMPLOYEE GRID */
+.monthly-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:12px;}
+.mc-day{background:#f0f2f5;border-radius:4px;padding:5px 3px;text-align:center;font-size:10px;}
+.mc-day.present{background:#EAF3DE;color:#3B6D11;}
+.mc-day.late{background:#FAEEDA;color:#854F0B;}
+.mc-day.absent{background:#FCEBEB;color:#A32D2D;}
+.mc-day.future{opacity:0.3;}
+.mc-num{font-weight:700;font-size:11px;}
 .emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;padding:16px;}
 .ec{background:var(--gray);border-radius:11px;padding:14px;border:1px solid var(--border);}
 .ec-top{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
@@ -121,40 +108,30 @@ body{background:#f0f2f5;min-height:100vh;}
 .ec-name{font-size:13px;font-weight:700;color:var(--text);}
 .ec-id{font-size:10px;color:var(--muted);}
 .ec-mob{font-size:10px;color:var(--muted);margin-top:1px;}
-.ec-del{padding:5px 10px;background:#FCEBEB;color:#A32D2D;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;}
-.ec-del:hover{background:#e24b4a;color:#fff;}
-
-/* QR PAGE */
 .qr-wrap{max-width:420px;}
 .qr-box{background:#fff;border-radius:13px;border:1px solid var(--border);padding:24px;text-align:center;}
 .qr-img{display:inline-block;padding:12px;background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:14px;}
 .qr-img img{display:block;width:220px;height:220px;}
 .qr-url{font-size:12px;color:var(--muted);background:var(--gray);padding:8px 12px;border-radius:8px;margin:10px 0;word-break:break-all;text-align:left;}
-.tips{background:#EAF3DE;border-radius:10px;padding:12px 14px;margin-top:14px;text-align:left;}
-.tips p{font-size:11px;color:#3B6D11;line-height:1.8;}
-
-/* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:999;display:none;align-items:center;justify-content:center;}
 .overlay.open{display:flex;}
-.modal{background:#fff;border-radius:18px;padding:26px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.modal{background:#fff;border-radius:18px;padding:26px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto;}
 .modal h3{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text);}
-.modal .field{margin-bottom:11px;}
 .modal-btns{display:flex;gap:8px;margin-top:14px;}
 .modal-btns button{flex:1;padding:10px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;}
 .mb-cancel{background:var(--gray);color:var(--text);}
 .mb-add{background:var(--brand);color:#fff;}
 .modal-err{font-size:11px;color:#e24b4a;margin-top:4px;min-height:14px;}
-
-/* TOAST */
 .toast{position:fixed;bottom:20px;right:20px;background:var(--dark);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;z-index:9999;transform:translateY(60px);opacity:0;transition:all 0.3s;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
-
-/* No data */
 .no-data{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
+/* Edit button — hidden by default */
+.edit-btn{padding:4px 8px;background:#E6F1FB;color:#185FA5;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;display:none;}
+.edit-mode .edit-btn{display:inline-block;}
 </style>
 </head>
 <body>
-
+ 
 <!-- LOGIN -->
 <div id="loginPage">
   <div class="login-card">
@@ -162,9 +139,7 @@ body{background:#f0f2f5;min-height:100vh;}
       <div class="floor-line"></div>
       <div class="figure" id="fig" style="right:220px">
         <div class="fig-head"></div>
-        <div class="fig-body">
-          <div class="bag-obj" id="bagObj"><div class="bag-handle"></div></div>
-        </div>
+        <div class="fig-body"><div class="bag-obj" id="bagObj"><div class="bag-handle"></div></div></div>
         <div class="fig-legs"><div class="fig-leg"></div><div class="fig-leg"></div></div>
       </div>
       <div class="logo-pop" id="logoPop">
@@ -181,7 +156,7 @@ body{background:#f0f2f5;min-height:100vh;}
     </div>
   </div>
 </div>
-
+ 
 <!-- ADMIN -->
 <div id="adminPage">
   <div class="sidebar">
@@ -192,16 +167,20 @@ body{background:#f0f2f5;min-height:100vh;}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Aaj ki Attendance
       </div>
+      <div class="nav-i" onclick="showPanel('monthly',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+        Monthly Report
+      </div>
       <div class="nav-i" onclick="showPanel('all',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        Full Attendance
+        Full History
       </div>
       <div class="nav-i" onclick="showPanel('emp',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         Employees
       </div>
       <div class="nav-i" onclick="showPanel('qr',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor"/><rect x="16" y="5" width="3" height="3" fill="currentColor"/><rect x="5" y="16" width="3" height="3" fill="currentColor"/><path d="M14 14h3v3h-3zM17 17h3v3M14 20h3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor"/><rect x="16" y="5" width="3" height="3" fill="currentColor"/><rect x="5" y="16" width="3" height="3" fill="currentColor"/></svg>
         QR Code
       </div>
       <div class="nav-i" onclick="showPanel('loc',this)">
@@ -209,19 +188,25 @@ body{background:#f0f2f5;min-height:100vh;}
         Location
       </div>
     </nav>
-    <div class="sb-bottom"><div class="logout-row" onclick="logout()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Logout
-    </div></div>
+    <div class="sb-bottom">
+      <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:8px;cursor:pointer;" onclick="promptEditMode()">⚙</div>
+      <div class="logout-row" onclick="logout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </div>
+    </div>
   </div>
-
+ 
   <div class="main-area">
     <div class="topbar">
       <div class="topbar-title" id="panelTitle">Aaj ki Attendance</div>
-      <div class="topbar-date" id="todayLbl"></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="editModeLabel" style="display:none;background:#E6F1FB;color:#185FA5;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">✏️ Edit Mode ON</div>
+        <div class="topbar-date" id="todayLbl"></div>
+      </div>
     </div>
     <div class="content">
-
+ 
       <!-- DAY PANEL -->
       <div class="panel on" id="panel-day">
         <div class="stats-row">
@@ -233,7 +218,9 @@ body{background:#f0f2f5;min-height:100vh;}
         <div class="card">
           <div class="card-top">
             <h3>Aaj ki attendance list</h3>
-            <button class="btn btn-green" onclick="location.href='/api/export/today'">⬇ Excel export</button>
+            <div class="btn-gap">
+              <button class="btn btn-green" onclick="location.href='/api/export/today'">⬇ Excel</button>
+            </div>
           </div>
           <div class="fbar">
             <input type="text" id="dayQ" placeholder="Name ya EMP ID..." oninput="loadDay()"/>
@@ -241,33 +228,62 @@ body{background:#f0f2f5;min-height:100vh;}
               <option value="">Sab</option><option value="present">Present</option><option value="late">Late</option><option value="absent">Absent</option>
             </select>
           </div>
-          <table class="tbl"><thead><tr><th>Employee</th><th>EMP ID</th><th>Mobile</th><th>Check-in</th><th>Check-out</th><th>Kaam</th><th>Status</th><th>Action</th></tr></thead>
+          <div style="overflow-x:auto;">
+          <table class="tbl"><thead><tr><th>Employee</th><th>EMP ID</th><th>Shift</th><th>Check-in</th><th>Check-out</th><th>Kaam</th><th>Status</th><th>Action</th></tr></thead>
           <tbody id="dayBody"></tbody></table>
+          </div>
         </div>
       </div>
-
+ 
+      <!-- MONTHLY PANEL -->
+      <div class="panel" id="panel-monthly">
+        <div class="card">
+          <div class="card-top">
+            <h3>📅 Monthly Report</h3>
+            <div class="btn-gap">
+              <select id="monthSel" onchange="loadMonthly()" style="padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;outline:none;">
+                <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+                <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+                <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+                <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+              </select>
+              <select id="yearSel" onchange="loadMonthly()" style="padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;outline:none;">
+                <option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option>
+              </select>
+              <button class="btn btn-green" onclick="exportMonthly()">⬇ Excel</button>
+            </div>
+          </div>
+          <div class="charts-grid" style="padding:16px;">
+            <div class="chart-card"><h4>Is mahine ka breakdown</h4>
+              <div class="pie-row"><svg id="piesvg" width="90" height="90"></svg><div class="pie-legend" id="pieLeg"></div></div>
+            </div>
+            <div class="chart-card"><h4>Pichle 30 din ka trend</h4><div class="bars" id="monthBars"></div></div>
+          </div>
+          <div style="overflow-x:auto;">
+          <table class="tbl"><thead><tr><th>Employee</th><th>EMP ID</th><th>Date</th><th>Shift</th><th>Check-in</th><th>Check-out</th><th>Kaam</th><th>Status</th></tr></thead>
+          <tbody id="monthBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+ 
       <!-- ALL PANEL -->
       <div class="panel" id="panel-all">
-        <div class="charts-grid">
-          <div class="chart-card"><h4>Aaj ka breakdown</h4>
-            <div class="pie-row"><svg id="piesvg" width="90" height="90"></svg><div class="pie-legend" id="pieLeg"></div></div>
-          </div>
-          <div class="chart-card"><h4>Is hafte ka trend</h4><div class="bars" id="weekBars"></div></div>
-        </div>
         <div class="card">
           <div class="card-top">
             <h3>Poori history</h3>
-            <button class="btn btn-green" onclick="location.href='/api/export/all'">⬇ Excel export</button>
+            <button class="btn btn-green" onclick="location.href='/api/export/all'">⬇ Full Excel</button>
           </div>
           <div class="fbar">
             <input type="text" id="allQ" placeholder="Name ya EMP ID..." oninput="loadAll()"/>
             <input type="date" id="allD" onchange="loadAll()"/>
           </div>
-          <table class="tbl"><thead><tr><th>Employee</th><th>EMP ID</th><th>Date</th><th>Check-in</th><th>Check-out</th><th>Kaam</th><th>Status</th><th>Action</th></tr></thead>
+          <div style="overflow-x:auto;">
+          <table class="tbl"><thead><tr><th>Employee</th><th>EMP ID</th><th>Date</th><th>Shift</th><th>Check-in</th><th>Check-out</th><th>Kaam</th><th>Status</th><th>Action</th></tr></thead>
           <tbody id="allBody"></tbody></table>
+          </div>
         </div>
       </div>
-
+ 
       <!-- EMPLOYEES PANEL -->
       <div class="panel" id="panel-emp">
         <div class="card">
@@ -278,78 +294,60 @@ body{background:#f0f2f5;min-height:100vh;}
           <div class="emp-grid" id="empGrid"></div>
         </div>
       </div>
-
+ 
       <!-- QR PANEL -->
       <div class="panel" id="panel-qr">
         <div class="qr-wrap">
           <div class="qr-box">
             <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;">Office QR Code</div>
-            <div class="qr-img"><img id="qrImg" src="" alt="QR Code load ho raha hai..."/></div>
+            <div class="qr-img"><img id="qrImg" src="" alt="QR load ho raha hai..."/></div>
             <div class="qr-url" id="qrUrl">URL load ho raha hai...</div>
-            <p style="font-size:12px;color:var(--muted);line-height:1.7;">Yeh QR print karke diwar par lagao.<br>Employee scan karein → EMP ID bharen → attendance register!</p>
+            <p style="font-size:12px;color:var(--muted);line-height:1.7;">Yeh QR print karke diwar par lagao.<br>Employee scan karein → Shift select karein → EMP ID bharein → Done!</p>
             <button class="btn btn-blue" style="width:100%;margin-top:12px;" onclick="window.print()">🖨 Print karo</button>
-            <div class="tips">
-              <p>✅ A4 size mein print karo<br>✅ Laminate karo taki kharab na ho<br>✅ Eye level par lagao (5-6 feet)<br>✅ Subah 8 baje se scan shuru</p>
-            </div>
           </div>
         </div>
       </div>
-
-    </div>
-  </div>
-</div>
-
+ 
       <!-- LOCATION PANEL -->
       <div class="panel" id="panel-loc">
         <div class="card" style="max-width:500px;">
           <div class="card-top">
-            <h3>📍 Office Location Set Karo</h3>
-            <button class="btn btn-orange" onclick="useMyLocation()">📱 Meri Location Use Karo</button>
+            <h3>📍 Office Location</h3>
+            <button class="btn btn-orange" onclick="useMyLocation()">📱 Meri Location</button>
           </div>
           <div style="padding:18px;">
             <div style="background:#E6F1FB;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#185FA5;line-height:1.7;">
-              <strong>Kaise kaam karta hai:</strong><br>
-              Office mein jaao → "Meri Location Use Karo" dabao → Save karo.<br>
-              Ab sirf office ke andar wale employees ki attendance lagegi!
+              <strong>Kaise kaam karta hai:</strong><br>Office mein jaao → "Meri Location" dabao → Save karo.<br>Ab sirf office ke andar wale ki attendance lagegi!
             </div>
-            <div class="field" style="margin-bottom:12px;">
-              <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Location Name</label>
-              <input id="locName" type="text" placeholder="Jaise: Suzuki Office, Main Gate" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;"/>
-            </div>
+            <div class="field"><label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Location Name</label><input id="locName" type="text" placeholder="Jaise: SPD Warehouse"/></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-              <div>
-                <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Latitude</label>
-                <input id="locLat" type="text" placeholder="23.0225" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;"/>
-              </div>
-              <div>
-                <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Longitude</label>
-                <input id="locLng" type="text" placeholder="72.5714" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;"/>
-              </div>
+              <div><label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Latitude</label><input id="locLat" type="text" placeholder="23.0225" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;"/></div>
+              <div><label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Longitude</label><input id="locLng" type="text" placeholder="72.5714" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;"/></div>
             </div>
-            <div style="margin-bottom:16px;">
-              <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Radius (meter)</label>
-              <input id="locRadius" type="number" value="100" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;"/>
-              <div style="font-size:11px;color:var(--muted);margin-top:4px;">100 meter = normal office area</div>
-            </div>
+            <div class="field"><label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;">Radius (meter)</label><input id="locRadius" type="number" value="100" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;"/></div>
             <div id="locStatus" style="min-height:16px;font-size:12px;margin-bottom:12px;font-weight:600;"></div>
             <div style="display:flex;gap:10px;">
-              <button onclick="saveLocation()" style="flex:2;padding:11px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">💾 Save Location</button>
+              <button onclick="saveLocation()" style="flex:2;padding:11px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">💾 Save</button>
               <button onclick="removeLocation()" style="flex:1;padding:11px;background:#FCEBEB;color:#A32D2D;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">🗑 Hatao</button>
             </div>
             <div id="currentLocBox" style="display:none;margin-top:16px;background:#EAF3DE;border-radius:10px;padding:14px;">
-              <div style="font-size:12px;font-weight:700;color:#3B6D11;margin-bottom:6px;">✅ Current Office Location:</div>
+              <div style="font-size:12px;font-weight:700;color:#3B6D11;margin-bottom:6px;">✅ Current Location:</div>
               <div id="currentLocInfo" style="font-size:12px;color:#3B6D11;line-height:1.8;"></div>
             </div>
           </div>
         </div>
       </div>
-
-<!-- ADD MODAL -->
+ 
+    </div>
+  </div>
+</div>
+ 
+<!-- ADD EMPLOYEE MODAL -->
 <div class="overlay" id="addOverlay">
   <div class="modal">
     <h3>Naya Employee Add Karo</h3>
-    <div class="field"><label>EMP ID <span style="color:var(--brand)">*</span></label><input id="nId" type="text" placeholder="Jaise: MW005"/></div>
-    <div class="field"><label>Full Name <span style="color:var(--brand)">*</span></label><input id="nName" type="text" placeholder="Employee ka naam"/></div>
+    <div class="field"><label>EMP ID *</label><input id="nId" type="text" placeholder="Jaise: MW005"/></div>
+    <div class="field"><label>Full Name *</label><input id="nName" type="text" placeholder="Employee ka naam"/></div>
     <div class="field"><label>Mobile Number</label><input id="nMob" type="text" placeholder="10 digit"/></div>
     <div class="modal-err" id="addErr"></div>
     <div class="modal-btns">
@@ -358,18 +356,64 @@ body{background:#f0f2f5;min-height:100vh;}
     </div>
   </div>
 </div>
-
+ 
+<!-- EDIT ATTENDANCE MODAL (Hidden PIN protected) -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <h3>✏️ Attendance Edit Karo</h3>
+    <div style="background:#FFF3E6;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#854F0B;" id="editRecInfo"></div>
+    <div class="field"><label>Check-in Time</label><input id="editCheckIn" type="text" placeholder="Jaise: 08:30 AM"/></div>
+    <div class="field"><label>Check-out Time</label><input id="editCheckOut" type="text" placeholder="Jaise: 05:30 PM"/></div>
+    <div class="field"><label>Shift</label>
+      <select id="editShift">
+        <option value="">-- Same rakho --</option>
+        <option value="A">A Shift (6:30 AM)</option>
+        <option value="B">B Shift (3:15 PM)</option>
+        <option value="G">G Shift (8:45 AM)</option>
+        <option value="C">C Shift (11:45 PM)</option>
+      </select>
+    </div>
+    <div class="field"><label>Status</label>
+      <select id="editStatus">
+        <option value="">-- Auto calculate --</option>
+        <option value="present">Present</option>
+        <option value="late">Late</option>
+      </select>
+    </div>
+    <div class="modal-err" id="editErr"></div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="mb-add" onclick="saveEdit()">Save karo</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- PIN MODAL -->
+<div class="overlay" id="pinOverlay">
+  <div class="modal" style="width:280px;">
+    <h3>🔒 Secret PIN Dalein</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Edit mode ke liye PIN zaroori hai</p>
+    <div class="field"><input id="pinInput" type="password" placeholder="PIN dalein" onkeydown="if(event.key==='Enter')verifyPin()"/></div>
+    <div class="modal-err" id="pinErr"></div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="document.getElementById('pinOverlay').classList.remove('open')">Cancel</button>
+      <button class="mb-add" onclick="verifyPin()">Verify</button>
+    </div>
+  </div>
+</div>
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 const API = '';
 const AV_COLORS = [
   ['#E6F1FB','#0C447C'],['#E1F5EE','#085041'],['#FAECE7','#712B13'],
   ['#EEEDFE','#3C3489'],['#EAF3DE','#3B6D11'],['#FAEEDA','#854F0B']
 ];
-
 let adminName = '';
-
+let editMode = false;
+let currentEditId = null;
+ 
 // ── LOGIN ANIMATION ──
 let animDone = false;
 function runAnim() {
@@ -382,336 +426,414 @@ function runAnim() {
     pos -= 5; fig.style.right = pos + 'px';
     if (pos <= 75) {
       clearInterval(walk);
-      bag.style.right = '-2px'; bag.style.top = 'auto';
-      bag.style.bottom = '-24px'; bag.style.transform = 'translateX(8px)';
-      setTimeout(() => {
-        pop.style.opacity = '1'; pop.style.transform = 'scale(1) rotate(0deg)';
-      }, 700);
+      bag.style.right = '-2px'; bag.style.bottom = '-24px';
+      bag.style.top = 'auto'; bag.style.transform = 'translateX(8px)';
+      setTimeout(() => { pop.style.opacity='1'; pop.style.transform='scale(1) rotate(0deg)'; }, 700);
     }
   }, 18);
 }
 setTimeout(runAnim, 400);
-
+ 
 // ── LOGIN ──
 async function doLogin() {
   const id = document.getElementById('lid').value.trim();
   const pw = document.getElementById('lpwd').value.trim();
   const err = document.getElementById('loginErr');
   try {
-    const res = await fetch(API + '/api/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ empId: id, password: pw })
-    });
+    const res = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({empId:id,password:pw}) });
     const d = await res.json();
     if (!res.ok) { err.textContent = '❌ ' + d.error; return; }
-    err.textContent = '';
     adminName = d.admin.name;
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('adminPage').style.display = 'flex';
     document.getElementById('sbName').textContent = adminName;
-    document.getElementById('todayLbl').textContent = new Date().toLocaleDateString('hi-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('todayLbl').textContent = new Date().toLocaleDateString('hi-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    // Set current month/year
+    const now = new Date();
+    document.getElementById('monthSel').value = String(now.getMonth()+1).padStart(2,'0');
+    document.getElementById('yearSel').value = String(now.getFullYear());
     loadDay(); loadQR();
-  } catch { err.textContent = '❌ Server se connect nahi ho saka. Server chalu hai?'; }
+  } catch { err.textContent = '❌ Server se connect nahi ho saka.'; }
 }
-
+ 
 // ── PANELS ──
 function showPanel(p, el) {
   document.querySelectorAll('.panel').forEach(x => x.classList.remove('on'));
   document.querySelectorAll('.nav-i').forEach(x => x.classList.remove('on'));
-  document.getElementById('panel-' + p).classList.add('on');
+  document.getElementById('panel-'+p).classList.add('on');
   if (el) el.classList.add('on');
-  const titles = { day: 'Aaj ki Attendance', all: 'Full Attendance & Charts', emp: 'Employee Management', qr: 'QR Code', loc: 'Office Location' };
-  document.getElementById('panelTitle').textContent = titles[p];
-  if (p === 'all') { loadAll(); loadCharts(); }
-  if (p === 'emp') loadEmp();
-  if (p === 'qr') loadQR();
-  if (p === 'loc') loadLocation();
-  if (p === 'day') loadDay();
+  const titles = { day:'Aaj ki Attendance', monthly:'Monthly Report', all:'Full History', emp:'Employees', qr:'QR Code', loc:'Office Location' };
+  document.getElementById('panelTitle').textContent = titles[p] || p;
+  if (p==='all') loadAll();
+  if (p==='monthly') loadMonthly();
+  if (p==='emp') loadEmp();
+  if (p==='qr') loadQR();
+  if (p==='loc') loadLocation();
+  if (p==='day') loadDay();
 }
-
+ 
 function avHtml(name, i) {
   const [bg, tc] = AV_COLORS[i % AV_COLORS.length];
-  const init = name.split(' ').map(x => x[0]).join('').substring(0, 2).toUpperCase();
+  const init = name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
   return `<span class="av" style="background:${bg};color:${tc};">${init}</span>`;
 }
-
 function badgeHtml(s) {
-  if (s === 'present') return '<span class="badge bp">Present</span>';
-  if (s === 'late') return '<span class="badge bl">Late</span>';
+  if (s==='present') return '<span class="badge bp">Present</span>';
+  if (s==='late') return '<span class="badge bl">Late</span>';
   return '<span class="badge ba">Absent</span>';
 }
-
+function shiftBadge(s) {
+  const colors = { A:'#EAF3DE', B:'#E6F1FB', G:'#FAEEDA', C:'#EEEDFE' };
+  return s ? `<span style="padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:${colors[s]||'#f0f2f5'};">${s}</span>` : '—';
+}
+ 
 // ── DAY ──
 async function loadDay() {
   try {
-    const res = await fetch(API + '/api/attendance/today');
+    const res = await fetch('/api/attendance/today');
     let data = await res.json();
-    const q = document.getElementById('dayQ').value.toLowerCase();
-    const f = document.getElementById('dayF').value;
-    // stats
-    const present = data.filter(d => d.status === 'present').length;
-    const late = data.filter(d => d.status === 'late').length;
-    const absent = data.filter(d => d.status === 'absent').length;
+    const present = data.filter(d=>d.status==='present').length;
+    const late = data.filter(d=>d.status==='late').length;
+    const absent = data.filter(d=>d.status==='absent').length;
     document.getElementById('sP').textContent = present;
     document.getElementById('sL').textContent = late;
     document.getElementById('sA').textContent = absent;
     document.getElementById('sT').textContent = data.length;
-    // filter
-    if (f) data = data.filter(d => d.status === f);
-    if (q) data = data.filter(d => d.name.toLowerCase().includes(q) || d.id.toLowerCase().includes(q));
+    const q = document.getElementById('dayQ').value.toLowerCase();
+    const f = document.getElementById('dayF').value;
+    if (f) data = data.filter(d=>d.status===f);
+    if (q) data = data.filter(d=>d.name.toLowerCase().includes(q)||d.id.toLowerCase().includes(q));
     const tbody = document.getElementById('dayBody');
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" class="no-data">Koi record nahi</td></tr>`; return; }
-    tbody.innerHTML = data.map((d, i) =>
+    if (!data.length) { tbody.innerHTML='<tr><td colspan="8" class="no-data">Koi record nahi</td></tr>'; return; }
+    tbody.innerHTML = data.map((d,i) =>
       `<tr>
-        <td>${avHtml(d.name, i)}${d.name}</td>
+        <td>${avHtml(d.name,i)}${d.name}</td>
         <td>${d.id}</td>
-        <td>${d.mobile}</td>
-        <td>${d.time || '—'}</td>
-        <td>${d.checkOut || '—'}</td>
-        <td>${d.totalHours || '—'}</td>
+        <td>${shiftBadge(d.shift)}</td>
+        <td>${d.time||'—'}</td>
+        <td>${d.checkOut||'—'}</td>
+        <td>${d.totalHours||'—'}</td>
         <td>${badgeHtml(d.status)}</td>
-        <td>${d.attended ? `<button onclick="delAttendance('${d.id}','${d.date}','${d.name}')" style="padding:4px 8px;background:#FCEBEB;color:#A32D2D;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;">🗑</button>` : '—'}</td>
+        <td style="white-space:nowrap;">
+          ${d.attended ? `<button class="edit-btn" onclick="openEdit('${d.id}','${d.date}','${d.name}','${d.time||''}','${d.checkOut||''}','${d.shift||'G'}')">✏️</button>` : ''}
+          ${d.attended ? `<button onclick="delAttendance('${d.id}','${d.date}','${d.name}')" style="padding:4px 8px;background:#FCEBEB;color:#A32D2D;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;">🗑</button>` : '—'}
+        </td>
       </tr>`
     ).join('');
-  } catch { document.getElementById('dayBody').innerHTML = '<tr><td colspan="5" class="no-data">Server se connect nahi ho saka</td></tr>'; }
+    applyEditMode();
+  } catch { document.getElementById('dayBody').innerHTML='<tr><td colspan="8" class="no-data">Server se connect nahi ho saka</td></tr>'; }
 }
-
-// ── ALL ──
-async function loadAll() {
+ 
+// ── MONTHLY ──
+async function loadMonthly() {
+  const month = document.getElementById('monthSel').value;
+  const year = document.getElementById('yearSel').value;
   try {
-    let url = API + '/api/attendance';
-    const q = document.getElementById('allQ')?.value.toLowerCase() || '';
-    const d = document.getElementById('allD')?.value || '';
-    if (d) url += '?date=' + d;
-    const res = await fetch(url);
+    const res = await fetch(`/api/attendance/monthly?month=${month}&year=${year}`);
     let data = await res.json();
-    if (q) data = data.filter(r => r.empName.toLowerCase().includes(q) || r.empId.toLowerCase().includes(q));
-    const tbody = document.getElementById('allBody');
-    if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="no-data">Koi record nahi</td></tr>'; return; }
-    tbody.innerHTML = data.map((r, i) =>
-      `<tr>
-        <td>${avHtml(r.empName, i)}${r.empName}</td>
-        <td>${r.empId}</td>
-        <td>${r.date}</td>
-        <td>${r.time || '—'}</td>
-        <td>${r.checkOut || '—'}</td>
-        <td>${r.totalHours || '—'}</td>
-        <td>${badgeHtml(r.status)}</td>
-        <td><button onclick="delAttendance('${r.empId}','${r.date}','${r.empName}')" style="padding:4px 8px;background:#FCEBEB;color:#A32D2D;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;">🗑</button></td>
-      </tr>`
-    ).join('');
-  } catch {}
-}
-
-async function loadCharts() {
-  try {
-    const res = await fetch(API + '/api/attendance/today');
-    const data = await res.json();
-    const total = data.length || 1;
-    const present = data.filter(d => d.status === 'present').length;
-    const late = data.filter(d => d.status === 'late').length;
-    const absent = data.filter(d => d.status === 'absent').length;
+    // Stats
+    const present = data.filter(d=>d.status==='present').length;
+    const late = data.filter(d=>d.status==='late').length;
+    const absent = data.length - present - late;
     // Pie
+    const total = data.length || 1;
     const pie = document.getElementById('piesvg');
     const segs = [{v:present,c:'#3B6D11',l:'Present'},{v:late,c:'#854F0B',l:'Late'},{v:absent,c:'#A32D2D',l:'Absent'}];
-    let angle = 0, paths = '';
+    let angle = -Math.PI/2, paths = '';
     segs.forEach(s => {
-      const pct = s.v / total;
-      const sweep = pct * 2 * Math.PI;
-      const x1 = 45 + 38 * Math.cos(angle), y1 = 45 + 38 * Math.sin(angle);
-      const x2 = 45 + 38 * Math.cos(angle + sweep), y2 = 45 + 38 * Math.sin(angle + sweep);
-      if (s.v > 0) paths += `<path d="M45,45 L${x1},${y1} A38,38 0 ${sweep > Math.PI ? 1 : 0},1 ${x2},${y2} Z" fill="${s.c}"/>`;
+      const sweep = (s.v/total)*2*Math.PI;
+      if (s.v > 0) {
+        const x1=45+38*Math.cos(angle),y1=45+38*Math.sin(angle);
+        const x2=45+38*Math.cos(angle+sweep),y2=45+38*Math.sin(angle+sweep);
+        paths += `<path d="M45,45 L${x1},${y1} A38,38 0 ${sweep>Math.PI?1:0},1 ${x2},${y2} Z" fill="${s.c}"/>`;
+      }
       angle += sweep;
     });
     pie.innerHTML = paths || '<circle cx="45" cy="45" r="38" fill="#e2e4ea"/>';
-    document.getElementById('pieLeg').innerHTML = segs.map(s => `<div class="pl-item"><div class="pl-dot" style="background:${s.c}"></div>${s.l}: <b>${s.v}</b></div>`).join('');
-    // Week bars
-    const bars = document.getElementById('weekBars');
-    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let bHtml = '';
-    for (let i = 6; i >= 0; i--) {
-      const d2 = new Date(); d2.setDate(d2.getDate() - i);
-      const ds = d2.toISOString().split('T')[0];
-      const res2 = await fetch(API + '/api/attendance?date=' + ds);
-      const recs = await res2.json();
-      const cnt = recs.length;
-      const h = total > 0 ? Math.round((cnt / total) * 80) : 0;
-      bHtml += `<div class="bar-col"><div class="bar-val">${cnt}</div><div class="bar-fill" style="height:${h}px;background:${i===0?'#F05A22':'#1E2D4E'};"></div><div class="bar-lbl">${days[d2.getDay()]}</div></div>`;
-    }
-    bars.innerHTML = bHtml;
+    document.getElementById('pieLeg').innerHTML = segs.map(s=>`<div class="pl-item"><div class="pl-dot" style="background:${s.c}"></div>${s.l}: <b>${s.v}</b></div>`).join('');
+    // Bars — last 30 days
+    const bars = document.getElementById('monthBars');
+    const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+    // Group by date
+    const byDate = {};
+    data.forEach(r => { byDate[r.date] = (byDate[r.date]||0)+1; });
+    const sortedDates = Object.keys(byDate).sort().slice(-14);
+    const maxV = Math.max(...Object.values(byDate), 1);
+    bars.innerHTML = sortedDates.map(dt => {
+      const d2 = new Date(dt);
+      const cnt = byDate[dt]||0;
+      const h = Math.round((cnt/maxV)*80);
+      return `<div class="bar-col"><div class="bar-val">${cnt}</div><div class="bar-fill" style="height:${h}px;background:#1E2D4E;"></div><div class="bar-lbl">${days[d2.getDay()]} ${d2.getDate()}</div></div>`;
+    }).join('');
+    // Table
+    const tbody = document.getElementById('monthBody');
+    if (!data.length) { tbody.innerHTML='<tr><td colspan="8" class="no-data">Is mahine koi record nahi</td></tr>'; return; }
+    tbody.innerHTML = data.map((r,i)=>
+      `<tr>
+        <td>${avHtml(r.empName,i)}${r.empName}</td>
+        <td>${r.empId}</td>
+        <td>${r.date}</td>
+        <td>${shiftBadge(r.shift)}</td>
+        <td>${r.time||'—'}</td>
+        <td>${r.checkOut||'—'}</td>
+        <td>${r.totalHours||'—'}</td>
+        <td>${badgeHtml(r.status)}</td>
+      </tr>`
+    ).join('');
+  } catch(e) { console.error(e); }
+}
+ 
+function exportMonthly() {
+  const month = document.getElementById('monthSel').value;
+  const year = document.getElementById('yearSel').value;
+  location.href = `/api/export/monthly?month=${month}&year=${year}`;
+}
+ 
+// ── ALL ──
+async function loadAll() {
+  try {
+    let url = '/api/attendance';
+    const q = document.getElementById('allQ')?.value.toLowerCase()||'';
+    const d = document.getElementById('allD')?.value||'';
+    if (d) url += '?date='+d;
+    const res = await fetch(url);
+    let data = await res.json();
+    if (q) data = data.filter(r=>r.empName.toLowerCase().includes(q)||r.empId.toLowerCase().includes(q));
+    const tbody = document.getElementById('allBody');
+    if (!data.length) { tbody.innerHTML='<tr><td colspan="9" class="no-data">Koi record nahi</td></tr>'; return; }
+    tbody.innerHTML = data.map((r,i)=>
+      `<tr>
+        <td>${avHtml(r.empName,i)}${r.empName}</td>
+        <td>${r.empId}</td>
+        <td>${r.date}</td>
+        <td>${shiftBadge(r.shift)}</td>
+        <td>${r.time||'—'}</td>
+        <td>${r.checkOut||'—'}</td>
+        <td>${r.totalHours||'—'}</td>
+        <td>${badgeHtml(r.status)}</td>
+        <td style="white-space:nowrap;">
+          <button class="edit-btn" onclick="openEdit('${r.empId}','${r.date}','${r.empName}','${r.time||''}','${r.checkOut||''}','${r.shift||'G'}')">✏️</button>
+          <button onclick="delAttendance('${r.empId}','${r.date}','${r.empName}')" style="padding:4px 8px;background:#FCEBEB;color:#A32D2D;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;">🗑</button>
+        </td>
+      </tr>`
+    ).join('');
+    applyEditMode();
   } catch {}
 }
-
+ 
 // ── EMPLOYEES ──
 async function loadEmp() {
   try {
-    const res = await fetch(API + '/api/employees');
+    const res = await fetch('/api/employees');
     const emps = await res.json();
     document.getElementById('empCnt').textContent = emps.length;
-    document.getElementById('empGrid').innerHTML = emps.map((e, i) => {
-      const [bg, tc] = AV_COLORS[i % AV_COLORS.length];
-      const init = e.name.split(' ').map(x => x[0]).join('').substring(0, 2).toUpperCase();
+    document.getElementById('empGrid').innerHTML = emps.map((e,i) => {
+      const [bg,tc] = AV_COLORS[i%AV_COLORS.length];
+      const init = e.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
       return `<div class="ec">
         <div class="ec-top">
           <div class="ec-av" style="background:${bg};color:${tc};">${init}</div>
           <div><div class="ec-name">${e.name}</div><div class="ec-id">${e.id}</div><div class="ec-mob">📱 ${e.mobile}</div></div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        ${e.id !== 'MW113761' ? `<button class="ec-del" onclick="delEmp('${e.id}','${e.name}')">🗑 Delete</button>` : '<span style="font-size:10px;color:var(--muted);">Super Admin</span>'}
-        <button onclick="delAllAttendance('${e.id}','${e.name}')" style="padding:5px 8px;background:#FAEEDA;color:#854F0B;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;">📋 Attendance Reset</button>
-      </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+          ${e.id!=='MW113761'?`<button onclick="delEmp('${e.id}','${e.name}')" style="padding:5px 10px;background:#FCEBEB;color:#A32D2D;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;">🗑 Delete</button>`:'<span style="font-size:10px;color:var(--muted);">Super Admin</span>'}
+          <button onclick="delAllAttendance('${e.id}','${e.name}')" style="padding:5px 8px;background:#FAEEDA;color:#854F0B;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;">📋 Reset</button>
+        </div>
       </div>`;
     }).join('');
   } catch {}
 }
-
-function openAdd() { document.getElementById('addOverlay').classList.add('open'); document.getElementById('addErr').textContent = ''; }
-function closeAdd() { document.getElementById('addOverlay').classList.remove('open'); ['nId','nName','nMob'].forEach(id => document.getElementById(id).value = ''); }
-
+ 
+function openAdd() { document.getElementById('addOverlay').classList.add('open'); document.getElementById('addErr').textContent=''; }
+function closeAdd() { document.getElementById('addOverlay').classList.remove('open'); ['nId','nName','nMob'].forEach(id=>document.getElementById(id).value=''); }
+ 
 async function addEmp() {
   const id = document.getElementById('nId').value.trim();
   const name = document.getElementById('nName').value.trim();
   const mob = document.getElementById('nMob').value.trim();
   const err = document.getElementById('addErr');
-  if (!id || !name) { err.textContent = '❌ EMP ID aur naam zaroori hai.'; return; }
-  const res = await fetch(API + '/api/employees', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, name, mobile: mob })
-  });
+  if (!id||!name) { err.textContent='❌ EMP ID aur naam zaroori hai.'; return; }
+  const res = await fetch('/api/employees',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name,mobile:mob})});
   const d = await res.json();
-  if (!res.ok) { err.textContent = '❌ ' + d.error; return; }
-  closeAdd(); loadEmp(); loadDay();
-  toast('✅ ' + name + ' add ho gaye!');
+  if (!res.ok) { err.textContent='❌ '+d.error; return; }
+  closeAdd(); loadEmp(); loadDay(); toast('✅ '+name+' add ho gaye!');
 }
-
+ 
 async function delEmp(id, name) {
-  if (!confirm(`"${name}" ko delete karein? Unki attendance bhi hat jayegi.`)) return;
-  await fetch(API + '/api/employees/' + id, { method: 'DELETE' });
-  loadEmp(); loadDay();
-  toast('🗑 ' + name + ' delete ho gaye.');
+  if (!confirm(`"${name}" ko delete karein?`)) return;
+  await fetch('/api/employees/'+id,{method:'DELETE'});
+  loadEmp(); loadDay(); toast('🗑 '+name+' delete ho gaye.');
 }
-
+ 
 // ── QR ──
 async function loadQR() {
   try {
-    const res = await fetch(API + '/api/qr');
+    const res = await fetch('/api/qr');
     const d = await res.json();
     document.getElementById('qrImg').src = d.qr;
-    document.getElementById('qrUrl').textContent = '🔗 ' + d.url;
-  } catch { document.getElementById('qrUrl').textContent = 'Server se QR load nahi hua'; }
+    document.getElementById('qrUrl').textContent = '🔗 '+d.url;
+  } catch { document.getElementById('qrUrl').textContent='Server se QR load nahi hua'; }
 }
-
-function logout() {
-  document.getElementById('adminPage').style.display = 'none';
-  document.getElementById('loginPage').style.display = 'flex';
-  animDone = false; runAnim();
-}
-
-// ── DELETE ATTENDANCE ────────────────────────────────────
+ 
+// ── DELETE ATTENDANCE ──
 async function delAttendance(empId, date, name) {
   if (!confirm(`"${name}" ki ${date} wali attendance delete karein?`)) return;
-  const res = await fetch(`${API}/api/attendance/employee/${empId}?date=${date}`, { method: 'DELETE' });
+  const res = await fetch(`/api/attendance/employee/${empId}?date=${date}`,{method:'DELETE'});
   const d = await res.json();
-  if (d.success) {
-    loadDay(); loadAll();
-    toast(`🗑 ${name} ki attendance delete ho gayi.`);
-  }
+  if (d.success) { loadDay(); loadAll(); toast(`🗑 ${name} ki attendance delete ho gayi.`); }
 }
-
-// Delete ALL attendance of an employee
+ 
 async function delAllAttendance(empId, name) {
-  if (!confirm(`"${name}" ki SAARI attendance delete karein? Yeh wapas nahi aayegi!`)) return;
-  const res = await fetch(`${API}/api/attendance/employee/${empId}`, { method: 'DELETE' });
-  const d = await res.json();
-  if (d.success) {
-    loadDay(); loadAll();
-    toast(`🗑 ${name} ki saari attendance delete ho gayi.`);
-  }
+  if (!confirm(`"${name}" ki SAARI attendance delete karein?`)) return;
+  await fetch(`/api/attendance/employee/${empId}`,{method:'DELETE'});
+  loadDay(); loadAll(); toast(`🗑 ${name} ki saari attendance delete ho gayi.`);
 }
-
-// ── LOCATION FUNCTIONS ──────────────────────────────────
+ 
+// ── EDIT MODE (PIN Protected) ──
+function promptEditMode() {
+  if (editMode) {
+    editMode = false;
+    document.getElementById('editModeLabel').style.display = 'none';
+    document.querySelectorAll('.edit-btn').forEach(b=>b.style.display='none');
+    toast('Edit mode band ho gaya.');
+    return;
+  }
+  document.getElementById('pinInput').value = '';
+  document.getElementById('pinErr').textContent = '';
+  document.getElementById('pinOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pinInput').focus(),100);
+}
+ 
+async function verifyPin() {
+  const pin = document.getElementById('pinInput').value.trim();
+  try {
+    const res = await fetch('/api/verify-pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin})});
+    const d = await res.json();
+    if (d.success) {
+      editMode = true;
+      document.getElementById('pinOverlay').classList.remove('open');
+      document.getElementById('editModeLabel').style.display = 'block';
+      applyEditMode();
+      toast('✅ Edit mode ON! Ab attendance edit kar sakte ho.');
+    } else {
+      document.getElementById('pinErr').textContent = '❌ Galat PIN!';
+    }
+  } catch { document.getElementById('pinErr').textContent = '❌ Server error'; }
+}
+ 
+function applyEditMode() {
+  const btns = document.querySelectorAll('.edit-btn');
+  btns.forEach(b => b.style.display = editMode ? 'inline-block' : 'none');
+}
+ 
+// Edit attendance
+let editAttId = null;
+async function openEdit(empId, date, name, checkIn, checkOut, shift) {
+  // Find attendance record id
+  try {
+    const res = await fetch(`/api/attendance?empId=${empId}&date=${date}`);
+    const data = await res.json();
+    const rec = data.find(r=>r.date===date&&r.empId===empId);
+    if (!rec) { toast('❌ Record nahi mila'); return; }
+    editAttId = rec.id;
+    document.getElementById('editRecInfo').textContent = `${name} — ${date}`;
+    document.getElementById('editCheckIn').value = checkIn;
+    document.getElementById('editCheckOut').value = checkOut;
+    document.getElementById('editShift').value = shift||'G';
+    document.getElementById('editStatus').value = '';
+    document.getElementById('editErr').textContent = '';
+    document.getElementById('editOverlay').classList.add('open');
+  } catch { toast('❌ Error loading record'); }
+}
+ 
+function closeEdit() {
+  document.getElementById('editOverlay').classList.remove('open');
+  editAttId = null;
+}
+ 
+async function saveEdit() {
+  if (!editAttId) return;
+  const checkIn = document.getElementById('editCheckIn').value.trim();
+  const checkOut = document.getElementById('editCheckOut').value.trim();
+  const shift = document.getElementById('editShift').value;
+  const status = document.getElementById('editStatus').value;
+  const pin = '011216'; // PIN already verified via edit mode
+ 
+  try {
+    const res = await fetch('/api/attendance/edit',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ pin, attendanceId: editAttId, checkIn, checkOut, shift, status })
+    });
+    const d = await res.json();
+    if (!res.ok) { document.getElementById('editErr').textContent = '❌ '+d.error; return; }
+    closeEdit(); loadDay(); loadAll(); loadMonthly();
+    toast('✅ Attendance update ho gayi!');
+  } catch { document.getElementById('editErr').textContent = '❌ Server error'; }
+}
+ 
+// ── LOCATION ──
 async function loadLocation() {
   try {
-    const res = await fetch(API + '/api/location');
+    const res = await fetch('/api/location');
     const d = await res.json();
     if (d.lat) {
-      document.getElementById('locName').value = d.name || '';
+      document.getElementById('locName').value = d.name||'';
       document.getElementById('locLat').value = d.lat;
       document.getElementById('locLng').value = d.lng;
-      document.getElementById('locRadius').value = d.radius || 100;
+      document.getElementById('locRadius').value = d.radius||100;
       document.getElementById('currentLocBox').style.display = 'block';
-      document.getElementById('currentLocInfo').innerHTML = 
-        `📍 <b>${d.name || 'Office'}</b><br>Lat: ${d.lat}<br>Lng: ${d.lng}<br>Radius: ${d.radius}m`;
+      document.getElementById('currentLocInfo').innerHTML = `📍 <b>${d.name||'Office'}</b><br>Lat: ${d.lat}<br>Lng: ${d.lng}<br>Radius: ${d.radius}m`;
     }
   } catch {}
 }
-
+ 
 function useMyLocation() {
   const status = document.getElementById('locStatus');
-  status.textContent = '📍 Location detect ho rahi hai...';
-  status.style.color = '#185FA5';
-  if (!navigator.geolocation) {
-    status.textContent = '❌ GPS support nahi hai is browser mein';
-    return;
-  }
+  status.textContent = '📍 Location detect ho rahi hai...'; status.style.color='#185FA5';
+  if (!navigator.geolocation) { status.textContent='❌ GPS support nahi hai'; return; }
   navigator.geolocation.getCurrentPosition((pos) => {
     document.getElementById('locLat').value = pos.coords.latitude.toFixed(6);
     document.getElementById('locLng').value = pos.coords.longitude.toFixed(6);
-    status.textContent = '✅ Location detect ho gayi! Ab Save karo.';
-    status.style.color = '#3B6D11';
-  }, () => {
-    status.textContent = '❌ GPS access nahi mila. Browser mein allow karo.';
-    status.style.color = '#A32D2D';
-  }, { enableHighAccuracy: true });
+    status.textContent = '✅ Location detect ho gayi! Ab Save karo.'; status.style.color='#3B6D11';
+  }, () => { status.textContent='❌ GPS access nahi mila.'; status.style.color='#A32D2D'; }, {enableHighAccuracy:true});
 }
-
+ 
 async function saveLocation() {
   const lat = document.getElementById('locLat').value.trim();
   const lng = document.getElementById('locLng').value.trim();
-  const radius = document.getElementById('locRadius').value || 100;
-  const name = document.getElementById('locName').value.trim() || 'Office';
+  const radius = document.getElementById('locRadius').value||100;
+  const name = document.getElementById('locName').value.trim()||'Office';
   const status = document.getElementById('locStatus');
-  if (!lat || !lng) { status.textContent = '❌ Lat/Lng zaroori hai'; status.style.color='#A32D2D'; return; }
+  if (!lat||!lng) { status.textContent='❌ Lat/Lng zaroori hai'; status.style.color='#A32D2D'; return; }
   try {
-    const res = await fetch(API + '/api/location', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ lat: parseFloat(lat), lng: parseFloat(lng), radius: parseInt(radius), name })
-    });
+    const res = await fetch('/api/location',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:parseFloat(lat),lng:parseFloat(lng),radius:parseInt(radius),name})});
     const d = await res.json();
-    if (d.success) {
-      status.textContent = '✅ Location save ho gayi!';
-      status.style.color = '#3B6D11';
-      // Server se fresh data load karo confirm ke liye
-      await loadLocation();
-      toast('✅ Office location set ho gayi!');
-    } else {
-      status.textContent = '❌ Save nahi hua: ' + (d.error || 'Unknown error');
-      status.style.color = '#A32D2D';
-    }
-  } catch(e) {
-    status.textContent = '❌ Server error. Dobara try karo.';
-    status.style.color = '#A32D2D';
-  }
+    if (d.success) { status.textContent='✅ Location save ho gayi!'; status.style.color='#3B6D11'; await loadLocation(); toast('✅ Location set!'); }
+    else { status.textContent='❌ '+d.error; status.style.color='#A32D2D'; }
+  } catch { status.textContent='❌ Server error.'; status.style.color='#A32D2D'; }
 }
-
+ 
 async function removeLocation() {
-  if (!confirm('Location hatana chahte hain? Phir sab jagah se attendance ho sakegi.')) return;
-  await fetch(API + '/api/location', { method: 'DELETE' });
-  document.getElementById('locLat').value = '';
-  document.getElementById('locLng').value = '';
-  document.getElementById('locName').value = '';
-  document.getElementById('locRadius').value = '100';
-  document.getElementById('currentLocBox').style.display = 'none';
-  const status = document.getElementById('locStatus');
-  status.textContent = '🗑 Location hata di gayi.';
-  status.style.color = '#7b8299';
+  if (!confirm('Location hatana chahte hain?')) return;
+  await fetch('/api/location',{method:'DELETE'});
+  ['locLat','locLng','locName'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('locRadius').value='100';
+  document.getElementById('currentLocBox').style.display='none';
+  const status=document.getElementById('locStatus');
+  status.textContent='🗑 Location hata di gayi.'; status.style.color='#7b8299';
   toast('Location remove ho gayi.');
 }
-
+ 
+function logout() {
+  document.getElementById('adminPage').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  editMode=false; animDone=false; runAnim();
+}
+ 
 function toast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
 </body>
