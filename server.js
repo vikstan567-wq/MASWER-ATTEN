@@ -77,11 +77,11 @@ function calcTotalHours(inTime24, outTime24, date) {
   } catch(e) { return 'N/A'; }
 }
  
-// Device fingerprint from request
+// Device ID — from client localStorage (reliable across IP changes)
 function getDeviceId(req) {
-  const ua = req.headers['user-agent'] || '';
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || '';
-  return crypto.createHash('md5').update(ua + ip).digest('hex');
+  // Try from body first, then query param
+  return req.body?.deviceId || req.query?.did || 
+    crypto.createHash('md5').update((req.headers['user-agent']||'') + (req.headers['x-forwarded-for']||'')).digest('hex');
 }
  
 // ── EMPLOYEE ROUTES ────────────────────────────────────────
