@@ -200,6 +200,34 @@ app.post('/api/checkout', async (req, res) => {
   res.json({ success: true, record: updated, employee: emp });
 });
  
+// ── MANUAL ATTENDANCE ADD (PIN Protected) ─────────────────
+app.post('/api/attendance/manual', async (req, res) => {
+  const { pin, empId, date, shift, checkIn, checkOut, status } = req.body;
+  if (pin !== EDIT_PIN) return res.status(403).json({ error: 'Galat PIN!' });
+  if (!empId || !date || !checkIn) return res.status(400).json({ error: 'EMP ID, date aur check-in zaroori hai' });
+ 
+  const emp = await db.collection('employees').findOne({ id: empId.toUpperCase() });
+  if (!emp) return res.status(404).json({ error: 'Employee nahi mila: ' + empId });
+ 
+  // Check if record already exists
+  const existing = await db.collection('attendance').findOne({ empId: emp.id, date });
+  if (existing) return res.status(409).json({ error: `${emp.name} ki ${date} wali attendance pehle se hai! Edit karo.` });
+ 
+  const checkIn24 = convertTo24(checkIn);
+  const recordStatus = status || checkShiftStatus(shift || 'G', checkIn24);
+  let totalHours = 'N/A';
+  if (checkOut) totalHours = calcTotalHours(checkIn24, convertTo24(checkOut), date);
+ 
+  const record = {
+    id: Date.now().toString(), empId: emp.id, empName: emp.name,
+    date, time: checkIn, shift: shift || 'G', status: recordStatus,
+    checkOut: checkOut || null, totalHours,
+    deviceId: 'manual', markedAt: new Date().toISOString(), manuallyAdded: true
+  };
+  await db.collection('attendance').insertOne(record);
+  res.json({ success: true, record, employee: emp });
+});
+ 
 // ── EDIT ATTENDANCE (PIN Protected) ───────────────────────
 app.post('/api/attendance/edit', async (req, res) => {
   const { pin, attendanceId, checkIn, checkOut, shift, status } = req.body;
