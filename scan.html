@@ -367,73 +367,75 @@ function getDistance(lat1, lng1, lat2, lng2) {
   return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
  
-async function checkLocation() {
+function blockBtn(icon, msg) {
   const locIcon = document.getElementById('locIcon');
   const locText = document.getElementById('locText');
   const locBar = document.getElementById('locationStatus');
   const btn = document.getElementById('mainBtn');
+  locIcon.textContent = icon;
+  locText.textContent = msg;
+  locBar.style.background = '#FCEBEB';
+  locText.style.color = '#A32D2D';
+  locationAllowed = false;
+  btn.disabled = true; btn.style.opacity = '0.5';
+}
  
-  // Check if location is set on server
+function allowBtn(icon, msg) {
+  const locIcon = document.getElementById('locIcon');
+  const locText = document.getElementById('locText');
+  const locBar = document.getElementById('locationStatus');
+  const btn = document.getElementById('mainBtn');
+  locIcon.textContent = icon;
+  locText.textContent = msg;
+  locBar.style.background = '#EAF3DE';
+  locText.style.color = '#3B6D11';
+  locationAllowed = true;
+  if (currentMode !== 'already_out' && currentMode !== 'blocked') {
+    btn.disabled = false; btn.style.opacity = '1';
+  }
+}
+ 
+async function checkLocation() {
+  const locText = document.getElementById('locText');
+  locText.textContent = 'Location check ho rahi hai...';
+ 
+  // Step 1: Phone ka GPS on hai ya nahi
+  if (!navigator.geolocation) {
+    blockBtn('🚫', 'Phone mein GPS nahi hai — attendance nahi lag sakti!');
+    return;
+  }
+ 
+  // Step 2: Admin ne office location set ki hai ya nahi
   let locData = {};
   try {
     const r = await fetch('/api/location');
     locData = await r.json();
   } catch(e) {}
  
-  // If no location set — allow attendance
-  if (!locData.lat || !locData.lng) {
-    locIcon.textContent = '✅';
-    locText.textContent = 'Location check nahi hai (admin ne set nahi ki)';
-    locBar.style.background = '#EAF3DE';
-    locText.style.color = '#3B6D11';
-    locationAllowed = true;
-    if (currentMode !== 'already_out' && currentMode !== 'blocked') {
-      btn.disabled = false; btn.style.opacity = '1';
-    }
-    return;
-  }
- 
-  // Location is set — GPS check mandatory
-  if (!navigator.geolocation) {
-    locIcon.textContent = '🚫';
-    locText.textContent = 'GPS support nahi hai — attendance nahi lag sakti!';
-    locBar.style.background = '#FCEBEB';
-    locText.style.color = '#A32D2D';
-    locationAllowed = false;
-    return;
-  }
- 
-  locText.textContent = 'GPS location check ho rahi hai...';
- 
+  // Step 3: GPS se current location lo
   navigator.geolocation.getCurrentPosition(async (pos) => {
+    // GPS ON hai
+ 
+    // Agar admin ne location set nahi ki — allow karo
+    if (!locData.lat || !locData.lng) {
+      allowBtn('✅', 'Location OK');
+      return;
+    }
+ 
+    // Distance check karo
     const dist = getDistance(pos.coords.latitude, pos.coords.longitude, locData.lat, locData.lng);
     const radius = locData.radius || 100;
  
     if (dist <= radius) {
-      locIcon.textContent = '✅';
-      locText.textContent = `${locData.name || 'Office'} mein hain (${Math.round(dist)}m)`;
-      locBar.style.background = '#EAF3DE';
-      locText.style.color = '#3B6D11';
-      locationAllowed = true;
-      if (currentMode !== 'already_out' && currentMode !== 'blocked') {
-        btn.disabled = false; btn.style.opacity = '1';
-      }
+      allowBtn('✅', `${locData.name || 'Office'} mein hain (${Math.round(dist)}m)`);
     } else {
-      locIcon.textContent = '🚫';
-      locText.textContent = `Aap ${locData.name || 'office'} se ${Math.round(dist)}m door hain! Attendance nahi lagi.`;
-      locBar.style.background = '#FCEBEB';
-      locText.style.color = '#A32D2D';
-      locationAllowed = false;
-      btn.disabled = true; btn.style.opacity = '0.5';
+      blockBtn('🚫', `Aap ${locData.name || 'office'} se ${Math.round(dist)}m door hain!`);
     }
+ 
   }, (err) => {
-    locIcon.textContent = '🚫';
-    locText.textContent = 'GPS access denied — location allow karein!';
-    locBar.style.background = '#FCEBEB';
-    locText.style.color = '#A32D2D';
-    locationAllowed = false;
-    btn.disabled = true; btn.style.opacity = '0.5';
-  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+    // GPS OFF hai ya permission nahi di — hamesha block
+    blockBtn('🚫', 'Phone ki location on karein — attendance nahi lag sakti!');
+  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
 }
  
 // Init
