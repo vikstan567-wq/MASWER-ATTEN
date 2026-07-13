@@ -367,17 +367,40 @@ function getDistance(lat1, lng1, lat2, lng2) {
   return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
  
-function blockBtn(icon, msg) {
+function blockBtn(icon, msg, showRetry=false) {
   const locIcon = document.getElementById('locIcon');
   const locText = document.getElementById('locText');
   const locBar = document.getElementById('locationStatus');
   const btn = document.getElementById('mainBtn');
   locIcon.textContent = icon;
-  locText.textContent = msg;
   locBar.style.background = '#FCEBEB';
   locText.style.color = '#A32D2D';
   locationAllowed = false;
   btn.disabled = true; btn.style.opacity = '0.5';
+  if (showRetry) {
+    locText.innerHTML = msg + ' <button onclick="requestLocationPermission()" style="margin-left:6px;padding:3px 10px;background:#A32D2D;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">📍 Allow karein</button>';
+  } else {
+    locText.textContent = msg;
+  }
+}
+ 
+function requestLocationPermission() {
+  const locText = document.getElementById('locText');
+  locText.textContent = '📍 Location permission maang raha hai...';
+  navigator.geolocation.getCurrentPosition(
+    () => { checkLocation(); },
+    (err) => {
+      if (err.code === 1) {
+        // Permission permanently denied — instructions dikhao
+        document.getElementById('locationStatus').style.background = '#FAEEDA';
+        locText.innerHTML = '⚙️ Settings mein jaao → Chrome → Location → Allow karo, phir <button onclick="checkLocation()" style="padding:3px 10px;background:#854F0B;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">Retry</button>';
+        document.getElementById('locText').style.color = '#854F0B';
+      } else {
+        checkLocation();
+      }
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
 }
  
 function allowBtn(icon, msg) {
@@ -433,14 +456,29 @@ async function checkLocation() {
     }
  
   }, (err) => {
-    // GPS OFF hai ya permission nahi di — hamesha block
-    blockBtn('🚫', 'Phone ki location on karein — attendance nahi lag sakti!');
+    // GPS OFF ya permission nahi — retry button dikhao
+    if (err.code === 1) {
+      blockBtn('🚫', 'Location allow karein —', true);
+    } else {
+      blockBtn('🚫', 'Phone ki location on karein —', true);
+    }
   }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
 }
  
-// Init
-checkLocation();
-checkDeviceSession();
+// Init — pehle permission maango, phir check karo
+function init() {
+  if (navigator.geolocation) {
+    // Seedha permission request karo page load pe
+    navigator.geolocation.getCurrentPosition(
+      () => { checkLocation(); checkDeviceSession(); },
+      () => { checkLocation(); checkDeviceSession(); },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+  } else {
+    checkLocation(); checkDeviceSession();
+  }
+}
+init();
 </script>
 </body>
 </html>
